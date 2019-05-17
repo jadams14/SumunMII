@@ -1,0 +1,652 @@
+/* Colours ------------------------------------------------------------------ */
+.color-black {
+  color: #000000;
+}
+
+.color-dark {
+  color: #2f4550;
+}
+
+.color-primary {
+  color: #586f7c;
+}
+
+.color-light {
+  color: #b8dbd9;
+}
+
+.color-white {
+  color: #f4f4f9;
+}
+
+.color-shadow {
+  color: #00000080;
+}
+
+/* Fonts -------------------------------------------------------------------- */
+@font-face {
+  font-family: "GlacialIndifference";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "GlacialIndifferenceBold";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf") format("opentype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "GlacialIndifferenceItalic";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf") format("opentype");
+  font-weight: italic;
+}
+
+@font-face {
+  font-family: "OpenSans";
+  src: url("fonts/open-sans/OpenSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "OpenSansBold";
+  src: url("fonts/open-sans/OpenSans-Bold.ttf") format("truetype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "OpenSansItalic";
+  src: url("fonts/open-sans/OpenSans-Italic.ttf") format("truetype");
+  font-weight: italic;
+}
+
+/* Text styles -------------------------------------------------------------- */
+body {
+  font-family: GlacialIndifference;
+  -webkit-font-smoothing: antialiased;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: #2f4550;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: GlacialIndifferenceBold;
+}
+
+p {
+  color: #2f4550;
+}
+
+a {
+  color: #000000;
+}
+
+small {
+  font-size: 10px;
+}
+
+input {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+img {
+  image-rendering: auto;
+}
+
+/* Generic Classes -------------------------------------------------- */
+.active {
+  background-color: #b8dbd9;
+}
+
+.inactive {
+  background-color: #586f7c;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.shadow {
+  box-shadow: 0 2px 4px #00000080;
+}
+
+/* Animations --------------------------------------------------------------- */
+@keyframes shake {
+  0% {
+    transform: translate(0%, 0%) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(-4%, 0%) rotate(-2deg);
+  }
+
+  75% {
+    transform: translate(4%, 0%) rotate(2deg);
+  }
+
+  100% {
+    transform: translate(0%, 0%) rotate(0deg);
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes opacity-oscillate {
+  0% {
+    opacity: 0.5;
+  }
+
+  25% {
+    opacity: 0.9;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
+
+/* Header and Footer Bars -------------------------------------------------- */
+header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: #2f4550;
+  box-shadow: 0 2px 4px #00000080;
+  display: flex;
+  justify-content: space-between;
+  z-index: 3;
+}
+
+header logo {
+  content: url("/assets/images/simun-logo.png");
+  display: block;
+  height: 48px;
+  margin: 12px;
+  width: 48px;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+header ul {
+  list-style: none;
+  margin-right: 48px;
+}
+
+header li {
+  font-family: GlacialIndifferenceBold;
+  text-align: center;
+  float: left;
+  margin: 8px 24px 8px 24px;
+}
+
+header li a {
+  font-size: 22px;
+  color: #586f7c;
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+}
+
+footer small {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Page Specifics -------------------------------------------------- */
+index {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 80px 3px 3px 3px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+index house {
+  content: url("/assets/images/simun-logo.png");
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  height: 20%;
+  width: auto;
+  box-sizing: border-box;
+  z-index: 5;
+}
+
+index postbox {
+  content: url("/assets/images/postbox.png");
+  display: block;
+  position: absolute;
+  left: 32%;
+  top: 44.5%;
+  height: 7.5%;
+  width: auto;
+  box-sizing: border-box;
+  z-index: 5;
+}
+
+index postbox:hover {
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+}
+
+index mail {
+  content: url("/assets/images/simun-mail.png");
+  display: block;
+  position: absolute;
+  left: 64%;
+  top: 45%;
+  height: 3%;
+  width: auto;
+  z-index: 5;
+  animation: spin 10s linear infinite;
+}
+
+index text-box {
+  display: block;
+  position: absolute;
+  width: 400px;
+  height: 140px;
+  top: 60%;
+  left: 50%;
+  background-color: #2f4550;
+  border-radius: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  transform: translate(-50%, 0%);
+}
+
+index text-box h1 {
+  color: #b8dbd9;
+  font-size: 24px;
+  vertical-align: center;
+}
+
+index text-box arrow-right {
+  content: url("/assets/images/arrow-right.png");
+  position: absolute;
+  display: block;
+  top: 75%;
+  left: 56%;
+  width: 12%;
+  height: auto;
+  z-index: 6;
+  margin: 2%;
+  transform: translate(-50%, -50%);
+  animation: opacity-oscillate 1s linear infinite;
+  cursor: pointer;
+}
+
+index text-box arrow-left {
+  content: url("/assets/images/arrow-left.png");
+  position: absolute;
+  display: block;
+  top: 75%;
+  left: 41%;
+  width: 12%;
+  height: auto;
+  z-index: 6;
+  margin: 2%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  visibility: hidden;
+}
+
+receive {
+  background-color: #2f4550;
+}
+
+receive snippet-list {
+  margin: 78px 4px 0px 0px;
+  display: table;
+  width: 28%;
+  background-color: #2f4550;
+  border-collapse: separate;
+  border-spacing: 1.5px 1.5px;
+}
+
+receive snippet-list row {
+  cursor: pointer;
+  display: table-row;
+  column-span: 2;
+  margin-bottom: 10x;
+}
+
+receive snippet-list snippet {
+  display: table-cell;
+  width: 26%;
+  background-color: #586f7c;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+receive snippet-list snippet info {
+  width: 55%;
+  float: left;
+  text-align: left;
+  display: block;
+  overflow: auto;
+}
+
+receive snippet-list snippet info description {
+  position: relative;
+  font-size: 20px;
+}
+
+receive snippet-list snippet info from {
+  font-size: 14px;
+  font-family: GlacialIndifferenceItalic;
+}
+
+receive snippet-list snippet img {
+  width: 40%;
+  height: auto;
+  max-height: 200px;
+  float: right;
+  display: block;
+}
+
+receive snippet-selected {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 28%;
+  right: 0;
+  bottom: 0;
+  margin: 80px 3px 3px 3px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+receive snippet-selected info description {
+  display: block;
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  top: 10%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  font-family: GlacialIndifferenceBold;
+}
+
+receive snippet-selected info from {
+  display: block;
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  top: 79%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  font-family: GlacialIndifferenceItalic;
+}
+
+receive snippet-selected img {
+  display: block;
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 60%;
+  width: auto;
+  max-width: 95%;
+}
+
+receive snippet-selected report {
+  content: url("/assets/images/report.png");
+  display: block;
+  position: absolute;
+  height: 5%;
+  width: auto;
+  right: 6px;
+  top: 6px;
+}
+
+receive snippet-selected control-box {
+  display: block;
+  position: absolute;
+  background-color: #586f7c;
+  height: 8%;
+  width: 20%;
+  top: 88%;
+  left: 50%;
+  border-radius: 12px;
+  transform: translate(-50%, -50%);
+}
+
+receive snippet-selected control-box a {
+  cursor: pointer;
+}
+
+receive snippet-selected control-box trash-it {
+  content: url("/assets/images/bin.png");
+  display: block;
+  position: absolute;
+  height: 70%;
+  width: auto;
+  top: 50%;
+  left: 10%;
+  transform: translate(0%, -50%);
+}
+
+receive snippet-selected control-box forward-it {
+  content: url("/assets/images/plane-mail.png");
+  display: block;
+  height: 70%;
+  width: auto;
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translate(0%, -50%);
+  cursor: pointer;
+}
+
+login {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 80px;
+  background-color: #2f4550;
+}
+
+login h1 {
+  color: #b8dbd9;
+  font-size: 100px;
+  margin-bottom: 10px;
+}
+
+login holder {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  height: 20%;
+  width: auto;
+  z-index: 5;
+}
+
+login input {
+  width: 200px;
+  height: 14px;
+  margin-bottom: 10px;
+  background-color: #f4f4f9;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 22px;
+  color: #2f4550;
+}
+
+login button {
+  margin-top: 10px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+}
+
+login .button:hover {
+  background-color: #2f4550;
+}
+
+receive {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 80px;
+  background-color: #2f4550;
+}
+
+receive h1 {
+  color: #b8dbd9;
+  font-size: 100px;
+  margin-bottom: 10px;
+}
+
+receive holder {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  height: 20%;
+  width: auto;
+  z-index: 5;
+}
+
+receive input {
+  width: 200px;
+  height: 14px;
+  margin-bottom: 10px;
+  background-color: #f4f4f9;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 22px;
+  color: #2f4550;
+}
+
+receive button {
+  margin-top: 10px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+}
+
+receive .button:hover {
+  background-color: #2f4550;
+}
+
+send {
+  display: table;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-image: radial-gradient(circle, #2f4550 70%, #b8dbd9, #2f4550, #2f4550);
+}
+
+send form {
+  padding-top: 100px;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+send form p {
+  color: #b8dbd9;
+  font-family: OpenSansItalic;
+}
+
+send form box-input {
+  display: block;
+  width: 400px;
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #586f7c;
+  text-align: center;
+  border-radius: 12px;
+  border: 8px dashed #586f7c;
+  background-image: url("/assets/images/plus-with-background.png");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: all 0.4s;
+}
+
+send form box-input input {
+  width: 380px;
+  height: 180px;
+  opacity: 0;
+  cursor: pointer;
+}
+
+send form box-input:hover {
+  border: 8px dashed #b8dbd9;
+}
+
+send form input {
+  width: 200px;
+  height: 14px;
+  margin-bottom: 10px;
+  background-color: #f4f4f9;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 22px;
+  color: #2f4550;
+}
+
+send form button {
+  background-image: url("/assets/images/send-button.png");
+  background-position: 50% 50%;
+  background-size: cover;
+  width: 100px;
+  height: 60px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  border: 4px solid #2f4550;
+  transition: all 0.4s;
+  cursor: pointer;
+}
+
+send form button:hover {
+  border: 4px solid #b8dbd9;
+}
+
+/*# sourceMappingURL=style.css.map */

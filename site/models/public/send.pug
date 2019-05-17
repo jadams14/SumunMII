@@ -1,0 +1,40 @@
+doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+
+include tools.pug
+
+html(lang=lang)
+  +create-head
+
+  body.index-bg(scroll="no")
+
+    // Big bar on top with navigation utilities.
+    header
+      a(href="/")
+        logo
+      ul
+        li
+          a(href="login") Login
+        li
+          a(href="receive") Receive
+        li
+          a.color-light(href="send") Send
+        li.nav-item
+          a(href="stats") Stats
+
+    send
+      form(method='post' action='/send')
+        br
+        input.shadow(type="text" name="title" placeholder="Snippet Title" required autofocus)
+        br
+        br
+        box-input(id="snippet-file-container")
+          input.shadow(id="snippet-file-input" type="file" name="fileupload" required)
+          holder
+            plus
+        p From jhon
+        button(type="send")
+  
+  +create-footer
+  
+  script(type="text/javascript" src="scripts/send.js")
+  script(type="text/javascript" src="scripts/tools.js")
