@@ -156,10 +156,12 @@ router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
   var confirmPassword = req.body.confirmPassword
-  if (password != confirmPassword) {
-    res.redirect('/register')
-  } else {
+  if (password == confirmPassword &&
+    (await database.getUserByUsername(username) == false)) {
     database.createUser(username, password)
+    res.render('Login')
+  } else {
+    res.redirect('/register')
   }
 })
 

@@ -16,6 +16,7 @@ module.exports = {
   getUserData: getUserData,
   updateUserPassword: updateUserPassword,
   removeUser: removeUser,
+  getUserByUsername: getUserByUsername,
 
   createRedirect: createRedirect,
   getRedirect: getRedirect,
@@ -138,9 +139,20 @@ async function createUser(username, password, testMode = false) {
   var salt = Math.random().toString(17).substring(2, 17) + Math.random().toString(5).substring(2, 5)
   password = await hashEntry(password + salt)
   await createLoginUser(username, password, salt, redirectID)
-  console.log(redirectID)
+  console.log('Redirect ID: ' + redirectID)
   let snippet = await createSnippet("", "Your Basic Snippet", redirectID)
-  await addSnippetToUser(redirectID, snippet.id)
+  console.log(redirectID, snippet)
+  // await addSnippetToUser(redirectID, snippet.id)
+}
+
+async function getUserByUsername(username, testMode = false) {
+  sqlCode = 'SELECT * FROM  login WHERE username = ?'
+  sqlData = username
+  let result = await sqlGet(sqlCode, sqlData, testMode)
+  if (result.length < 1) {
+    return false
+  }
+  return true
 }
 
 async function checkPassword(hash, original, salt) {
@@ -208,6 +220,7 @@ async function removeRedirect(redirectid, testMode = false) {
 
 async function addSnippetToUser(redirectid, snippetid, testMode = false) {
   var result = await getRedirect(snippetid, testMode).then(res => {
+    console.log(res[0] + " " + snippetid)
     return res[0]
   })
   var currentSnippets = result.snippetids
@@ -220,7 +233,7 @@ async function addSnippetToUser(redirectid, snippetid, testMode = false) {
 
 
 async function getSnippet(snippetid, testMode = false) {
-  console.log(snippetid)
+  console.log("Get Snippet ID: " + snippetid)
   var sqlCode = 'SELECT * FROM snippet WHERE id = ?'
   return sqlGet(sqlCode, snippetid, testMode)
 }
@@ -236,7 +249,7 @@ async function createSnippet(content, description, redirectid, testMode = false)
   var fromRedirect = await getRedirect(redirectid, testMode).then(res => {
     return res[0]
   })
-  console.log(fromRedirect)
+  console.log("Result of GetRedirect: " + fromRedirect)
   // Create a new snippet content.
   var sqlCode = 'INSERT INTO snippetcontent (content, description) VALUES (?, ?)'
   var snippetContentID = await sqlPut(sqlCode, [content, description], testMode).then(res => {
@@ -257,8 +270,8 @@ async function createSnippet(content, description, redirectid, testMode = false)
     return res
   })
 
-  var snippetIDs = await forwardSnippet(snippetID, testMode)
-  return snippetIDs
+  // var snippetIDs = await forwardSnippet(snippetID, testMode)
+  return snippetID
 }
 
 async function forwardSnippet(snippetid, testMode = false) {
