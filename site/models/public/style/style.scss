@@ -512,6 +512,13 @@ login {
     margin-bottom: 10px;
   }
 
+  h2 {
+    color: $color-light;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
   holder {
     display: block;
     position: absolute;
@@ -545,7 +552,7 @@ login {
   }
 }
 
-receive {
+register {
   display: block;
   position: absolute;
   top: 0;
@@ -558,6 +565,12 @@ receive {
   h1 {
     color: $color-light;
     font-size: 100px;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    color: $color-light;
+    font-size: 20px;
     margin-bottom: 10px;
   }
 

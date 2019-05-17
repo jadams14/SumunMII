@@ -3,10 +3,12 @@ var tools = require('./tools.js')
 var currentlyActive = 0
 
 // Shorthand for getting elements by ID.
-var $ = function (id) { return document.getElementById(id) }
+var $ = function (id) {
+  return document.getElementById(id)
+}
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive (counter) {
+function setActive(counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -23,7 +25,7 @@ function setActive (counter) {
 
     // Update trash it and forward it buttons.
     $('forward-it').onclick = () => {
-      console.log('trash-it button pressed')
+      console.log('forward-it button pressed')
       tools.forwardSnippet(snippet.id, (err, response) => {
         if (err) {
           console.log('Error forwarding snippet', err)
@@ -31,6 +33,11 @@ function setActive (counter) {
         }
         console.log('Snippet successfully forwarded')
       })
+    }
+    $('trash-it').onclick = () => {
+      console.log('trash-it button pressed')
+      //Need to make the functionality to delete a snippet
+
     }
   })
 
@@ -42,7 +49,7 @@ function setActive (counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons () {
+function assignButtons() {
   var viable = true
   var counter = 0
   while (viable) {

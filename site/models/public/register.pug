@@ -9,7 +9,7 @@ html(lang=lang)
 
     // Big bar on top with navigation utilities.
     header
-      a(href="/")
+      a(href="/index")
         logo
       ul
         li
@@ -25,13 +25,16 @@ html(lang=lang)
       holder
       form(class="register-submit"  method="post" action="/register")
         h1 Simun  
+        h2=rMessage
         input.shadow(type="text" name="username" id="Input Username" placeholder="Username" autofocus)
         br
         input.shadow(type="password" name="password" id="Input Password" placeholder="Password")
         br
         input.shadow(type="password" name="confirmPassword" id="Input Password" placeholder="Confirm Password")
         br
-        button(type="submit" name="button" id="Input Username" placeholder="Username" value="login") Register  
+        button(type="submit" name="button" value="register") Register  
         br
-        button(type="submit" name="button" id="Input Username" placeholder="Username" value="register") Cancel
+        button(type="submit" name="button"  value="cancel") Cancel
   +create-footer
+
+  //- script(type="text/javascript" src="../scripts/login.js")

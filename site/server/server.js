@@ -69,6 +69,20 @@ router.post('/create-snippet/', (req, res) => {
 /// ///////////////////////////////////////////////
 // Page requests.
 /// ///////////////////////////////////////////////
+router.get('/index', function (req, res) {
+  res.render('index')
+})
+
+router.get('/register', function (req, res) {
+  res.render('register')
+})
+router.get('/send', function (req, res) {
+  res.render('send')
+})
+
+router.get('/stats', function (req, res) {
+  res.render('stats')
+})
 
 // The next 2 requests include the authentication
 // Of the current user
@@ -143,25 +157,38 @@ router.get('/stats', (req, res) => {
 // Login authentication
 // Gets the username and password of input and calls authentication function
 router.post('/login', async function (req, res) {
-  if (req.body.button == "login") {
-    var username = req.body.username
-    var password = req.body.password
+  var username = req.body.username
+  var password = req.body.password
+  if (req.body.button === "login") {
+    if (username === "" || password === "") {
+      res.render('login', {
+        lMessage: "Please Enter Username and/or Password!"
+      })
+    }
     await authenticate(res, req, username, password)
-
   } else if (req.body.button == "register") {
     res.redirect('register')
   }
 })
+
 router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
   var confirmPassword = req.body.confirmPassword
-  if (password == confirmPassword &&
-    (await database.getUserByUsername(username) == false)) {
-    database.createUser(username, password)
-    res.render('Login')
-  } else {
-    res.redirect('/register')
+  if (req.body.button === "register") {
+    if (username === "" || password === "" || confirmPassword === "") {
+      res.render('register', {
+        rMessage: "Please Enter Username, Password and/or Confirm Your Password!"
+      })
+    } else if (password === confirmPassword &&
+      (await database.getUserByUsername(username) === false)) {
+      database.createUser(username, password)
+      res.render('login', {
+        rMessage: "Please Login Using Your New Credentials!"
+      })
+    }
+  } else if (req.body.button == "cancel") {
+    res.redirect('/login')
   }
 })
 
@@ -218,16 +245,5 @@ async function generateJWT(res, req, redirectid, cookieName) {
   console.log(res.cookie)
   res.cookie(cookieName, token)
 }
-
-router.get('/register', function (req, res) {
-  res.render('register')
-})
-router.get('/send', function (req, res) {
-  res.render('send')
-})
-
-router.get('/stats', function (req, res) {
-  res.render('stats')
-})
 
 app.use('/', router)
