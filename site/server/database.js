@@ -17,6 +17,7 @@ module.exports = {
   updateUserPassword: updateUserPassword,
   removeUser: removeUser,
   getUserByUsername: getUserByUsername,
+  getUserByAlias: getUserByAlias,
 
   createRedirect: createRedirect,
   getRedirect: getRedirect,
@@ -159,6 +160,16 @@ async function checkPassword(hash, original, salt) {
   return await compareHash(original + salt, hash)
 }
 
+async function getUserByAlias(alias, testMode = false) {
+  let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
+    return res[0]
+  })
+  let sqlCode = 'SELECT * FROM login WHERE redirectid = ?'
+  let username = await sqlGet(sqlCode, redirect.id, testMode).then(res => {
+    return res[0].username
+  })
+  return username
+}
 
 async function createLoginUser(username, password, salt, redirectid, testMode = false) {
   var sqlData = [username, password, salt, redirectid]
@@ -274,12 +285,17 @@ async function createSnippet(content, description, redirectid, testMode = false)
   return snippetID
 }
 
-async function forwardSnippet(snippetid, testMode = false) {
+async function forwardSnippet(snippetcontentid, testMode = false) {
   // Retrieve the current snippet.
-  var currentSnippet = await getSnippet(snippetid, testMode).then(res => {
+
+  // var currentSnippet = await getSnippetContent(snippetcontentid, testMode).then(res => {
+  //   return res[0]
+  // })
+  // console.log(currentSnippetContent)
+  var currentSnippet = await getSnippetByContentID(snippetcontentid, testMode).then(res => {
     return res[0]
   })
-
+  console.log(currentSnippet)
   // Retrieve the redirect corresponding to the redirectid.
   var fromRedirect = await getRedirect(currentSnippet.redirectid, testMode).then(res => {
     return res[0]
@@ -296,11 +312,11 @@ async function forwardSnippet(snippetid, testMode = false) {
   // Create two new snippets with the same content, belonging to the two different
   // toRedirects and from the fromRedirect.
   var sqlCode = 'INSERT INTO snippet (contentid, redirectid, firstowner, previousowner, forwardcount) VALUES (?, ?, ?, ?, ?)'
-  var sqlData = [currentSnippet.contentid, toRedirect0.id, currentSnippet.firstowner, fromRedirect.alias, currentSnippet.forwardcount + 1]
+  var sqlData = [currentSnippet.contentid, toRedirect0.id, currentSnippet.firstowner, fromRedirect.id, currentSnippet.forwardcount + 1]
   var newSnippetID0 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
-  sqlData = [currentSnippet.contentid, toRedirect1.id, currentSnippet.firstowner, fromRedirect.alias, currentSnippet.forwardcount + 1]
+  sqlData = [currentSnippet.contentid, toRedirect1.id, currentSnippet.firstowner, fromRedirect.id, currentSnippet.forwardcount + 1]
   var newSnippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
@@ -342,6 +358,11 @@ async function forwardSnippet(snippetid, testMode = false) {
 
 function getSnippetContent(snippetcontentid, testMode = false) {
   var sqlCode = 'SELECT * FROM snippetcontent WHERE id = ?'
+  return sqlGet(sqlCode, snippetcontentid, testMode)
+}
+
+function getSnippetByContentID(snippetcontentid, testMode = false) {
+  var sqlCode = 'SELECT * FROM snippet WHERE contentid = ?'
   return sqlGet(sqlCode, snippetcontentid, testMode)
 }
 

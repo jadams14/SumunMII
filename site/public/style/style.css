@@ -247,7 +247,15 @@ index mail {
   height: 3%;
   width: auto;
   z-index: 5;
+}
+index mail:hover {
   animation: spin 10s linear infinite;
+  animation-iteration-count: infinite;
+}
+index h2 {
+  color: #2f4550;
+  font-size: 70px;
+  vertical-align: center;
 }
 index text-box {
   display: block;
@@ -293,6 +301,7 @@ index text-box arrow-left {
   z-index: 6;
   margin: 2%;
   transform: translate(-50%, -50%);
+  animation: opacity-oscillate 1s linear infinite;
   cursor: pointer;
   visibility: hidden;
 }

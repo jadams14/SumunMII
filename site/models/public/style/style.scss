@@ -249,6 +249,8 @@ index {
   border-radius: 6px;
   padding: 10px;
 
+
+
   house {
     content: url("/assets/images/simun-logo.png");
     display: block;
@@ -289,7 +291,18 @@ index {
     height: 3%;
     width: auto;
     z-index: 5;
+    // animation: spin 10s linear infinite;
+  }
+
+  mail:hover {
     animation: spin 10s linear infinite;
+    animation-iteration-count: infinite;
+  }
+
+  h2 {
+    color: $color-dark;
+    font-size: 70px;
+    vertical-align: center;
   }
 
   text-box {
@@ -338,6 +351,7 @@ index {
       z-index: 6;
       margin: 2%;
       transform: translate(-50%, -50%);
+      animation: opacity-oscillate 1s linear infinite;
       cursor: pointer;
       visibility: hidden;
     }

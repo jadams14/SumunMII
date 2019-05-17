@@ -69,8 +69,13 @@ router.post('/create-snippet/', (req, res) => {
 /// ///////////////////////////////////////////////
 // Page requests.
 /// ///////////////////////////////////////////////
-router.get('/index', function (req, res) {
-  res.render('index')
+router.get('/index', async function (req, res) {
+  var token = new Cookies(req, res).get('currentUser')
+  let decoded = jwt.verify(token, config.secret)
+  let username = await database.getUserByAlias(decoded.data)
+  res.render('index', {
+    user: username
+  })
 })
 
 router.get('/register', function (req, res) {
@@ -114,6 +119,7 @@ router.get('/receive', (req, res) => {
   database.getRedirect(redirectID).then(redirect => {
     redirect = redirect[0]
     var snippets = JSON.parse(redirect.snippetids)
+    console.log(snippets)
     // For each snippet, retrieve the snippet content ID.
     snippets.forEach((entry, index) => {
       database.getSnippet(entry).then(snippet => {
@@ -184,7 +190,7 @@ router.post('/register', async function (req, res) {
       (await database.getUserByUsername(username) === false)) {
       database.createUser(username, password)
       res.render('login', {
-        rMessage: "Please Login Using Your New Credentials!"
+        lMessage: "Please Login Using Your New Credentials!"
       })
     }
   } else if (req.body.button == "cancel") {
@@ -199,7 +205,12 @@ async function verifyUserViaAlias(res, req, alias) {
       if (
         result[0].alias === alias
       ) {
-        res.render('index')
+        let username = await database.getUserByAlias(alias, false).then(res => {
+          return res
+        })
+        res.render('index', {
+          user: username
+        })
       } else {
         res.render('login')
       }
@@ -221,12 +232,18 @@ async function authenticate(res, req, username, password) {
         await database.checkPassword(result[0].password, password, result[0].salt)
       ) {
         await generateJWT(res, req, result[0].redirectid, 'currentUser')
-        res.render('index')
+        res.render('index', {
+          user: username
+        })
       } else {
-        res.render('login')
+        res.render('login', {
+          rMessage: "Please Enter Username, Password and/or Confirm Your Password!"
+        })
       }
     } else {
-      res.render('login')
+      res.render('login', {
+        rMessage: "Wrong Username and/or Password!"
+      })
     }
   })
 }
@@ -238,7 +255,7 @@ async function generateJWT(res, req, redirectid, cookieName) {
   var token = jwt.sign({
     data: alias
   }, config.secret, {
-    expiresIn: 30
+    expiresIn: config.expire
   }, {
     algorithm: 'RS256'
   })
