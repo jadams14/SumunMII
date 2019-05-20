@@ -28,36 +28,30 @@
   font-family: "GlacialIndifference";
   src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf") format("opentype");
 }
-
 @font-face {
   font-family: "GlacialIndifferenceBold";
   src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf") format("opentype");
   font-weight: bold;
 }
-
 @font-face {
   font-family: "GlacialIndifferenceItalic";
   src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf") format("opentype");
   font-weight: italic;
 }
-
 @font-face {
   font-family: "OpenSans";
   src: url("fonts/open-sans/OpenSans-Regular.ttf") format("truetype");
 }
-
 @font-face {
   font-family: "OpenSansBold";
   src: url("fonts/open-sans/OpenSans-Bold.ttf") format("truetype");
   font-weight: bold;
 }
-
 @font-face {
   font-family: "OpenSansItalic";
   src: url("fonts/open-sans/OpenSans-Italic.ttf") format("truetype");
   font-weight: italic;
 }
-
 /* Text styles -------------------------------------------------------------- */
 body {
   font-family: GlacialIndifference;
@@ -118,53 +112,91 @@ img {
   box-shadow: 0 2px 4px #00000080;
 }
 
+.scene_element {
+  animation-duration: 2s;
+  transition-timing-function: ease-in;
+  animation-fill-mode: both;
+}
+
+.scene_element--fadein {
+  animation-name: fadeIn;
+}
+
+/** An element that fades in and slides up */
+.scene_element--fadeinup {
+  animation-name: fadeInUp;
+}
+
+/** An element that fades in and slides from the right */
+.scene_element--fadeinright {
+  animation-name: fadeInRight;
+}
+
 /* Animations --------------------------------------------------------------- */
 @keyframes shake {
   0% {
     transform: translate(0%, 0%) rotate(0deg);
   }
-
   25% {
     transform: translate(-4%, 0%) rotate(-2deg);
   }
-
   75% {
     transform: translate(4%, 0%) rotate(2deg);
   }
-
   100% {
     transform: translate(0%, 0%) rotate(0deg);
   }
 }
-
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes spin {
   100% {
     transform: rotate(360deg);
   }
 }
-
 @keyframes opacity-oscillate {
   0% {
     opacity: 0.5;
   }
-
   25% {
     opacity: 0.9;
   }
-
   50% {
     opacity: 1;
   }
-
   75% {
     opacity: 0.9;
   }
-
   100% {
     opacity: 0.5;
   }
 }
-
 /* Header and Footer Bars -------------------------------------------------- */
 header {
   position: fixed;
@@ -177,7 +209,6 @@ header {
   justify-content: space-between;
   z-index: 3;
 }
-
 header logo {
   content: url("/assets/images/simun-logo.png");
   display: block;
@@ -187,19 +218,16 @@ header logo {
   box-sizing: border-box;
   z-index: 3;
 }
-
 header ul {
   list-style: none;
   margin-right: 48px;
 }
-
 header li {
   font-family: GlacialIndifferenceBold;
   text-align: center;
   float: left;
   margin: 8px 24px 8px 24px;
 }
-
 header li a {
   font-size: 22px;
   color: #586f7c;
@@ -231,7 +259,6 @@ index {
   border-radius: 6px;
   padding: 10px;
 }
-
 index house {
   content: url("/assets/images/simun-logo.png");
   display: block;
@@ -244,7 +271,6 @@ index house {
   box-sizing: border-box;
   z-index: 5;
 }
-
 index postbox {
   content: url("/assets/images/postbox.png");
   display: block;
@@ -256,12 +282,10 @@ index postbox {
   box-sizing: border-box;
   z-index: 5;
 }
-
 index postbox:hover {
   animation: shake 0.5s;
   animation-iteration-count: infinite;
 }
-
 index mail {
   content: url("/assets/images/simun-mail.png");
   display: block;
@@ -271,9 +295,16 @@ index mail {
   height: 3%;
   width: auto;
   z-index: 5;
-  animation: spin 10s linear infinite;
 }
-
+index mail:hover {
+  animation: spin 10s linear infinite;
+  animation-iteration-count: infinite;
+}
+index h2 {
+  color: #2f4550;
+  font-size: 70px;
+  vertical-align: center;
+}
 index text-box {
   display: block;
   position: absolute;
@@ -288,13 +319,11 @@ index text-box {
   padding-top: 5px;
   transform: translate(-50%, 0%);
 }
-
 index text-box h1 {
   color: #b8dbd9;
   font-size: 24px;
   vertical-align: center;
 }
-
 index text-box arrow-right {
   content: url("/assets/images/arrow-right.png");
   position: absolute;
@@ -309,7 +338,6 @@ index text-box arrow-right {
   animation: opacity-oscillate 1s linear infinite;
   cursor: pointer;
 }
-
 index text-box arrow-left {
   content: url("/assets/images/arrow-left.png");
   position: absolute;
@@ -321,6 +349,7 @@ index text-box arrow-left {
   z-index: 6;
   margin: 2%;
   transform: translate(-50%, -50%);
+  animation: opacity-oscillate 1s linear infinite;
   cursor: pointer;
   visibility: hidden;
 }
@@ -328,7 +357,6 @@ index text-box arrow-left {
 receive {
   background-color: #2f4550;
 }
-
 receive snippet-list {
   margin: 78px 4px 0px 0px;
   display: table;
@@ -337,14 +365,27 @@ receive snippet-list {
   border-collapse: separate;
   border-spacing: 1.5px 1.5px;
 }
-
+receive snippet-list table-scroll {
+  position: relative;
+  max-width: 1280px;
+  width: 100%;
+  margin: auto;
+  display: block;
+}
+receive snippet-list table-wrap {
+  width: 100%;
+  display: block;
+  height: 300px;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
 receive snippet-list row {
   cursor: pointer;
   display: table-row;
   column-span: 2;
   margin-bottom: 10x;
 }
-
 receive snippet-list snippet {
   display: table-cell;
   width: 26%;
@@ -352,7 +393,6 @@ receive snippet-list snippet {
   padding: 10px;
   border-radius: 6px;
 }
-
 receive snippet-list snippet info {
   width: 55%;
   float: left;
@@ -360,17 +400,14 @@ receive snippet-list snippet info {
   display: block;
   overflow: auto;
 }
-
 receive snippet-list snippet info description {
   position: relative;
   font-size: 20px;
 }
-
 receive snippet-list snippet info from {
   font-size: 14px;
   font-family: GlacialIndifferenceItalic;
 }
-
 receive snippet-list snippet img {
   width: 40%;
   height: auto;
@@ -378,10 +415,14 @@ receive snippet-list snippet img {
   float: right;
   display: block;
 }
-
+receive h1 {
+  color: #b8dbd9;
+  font-size: 100px;
+  text-align: center;
+}
 receive snippet-selected {
   display: block;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 28%;
   right: 0;
@@ -391,7 +432,6 @@ receive snippet-selected {
   border-radius: 6px;
   padding: 10px;
 }
-
 receive snippet-selected info description {
   display: block;
   position: absolute;
@@ -402,7 +442,6 @@ receive snippet-selected info description {
   font-size: 30px;
   font-family: GlacialIndifferenceBold;
 }
-
 receive snippet-selected info from {
   display: block;
   position: absolute;
@@ -413,7 +452,6 @@ receive snippet-selected info from {
   font-size: 16px;
   font-family: GlacialIndifferenceItalic;
 }
-
 receive snippet-selected img {
   display: block;
   position: absolute;
@@ -424,7 +462,6 @@ receive snippet-selected img {
   width: auto;
   max-width: 95%;
 }
-
 receive snippet-selected report {
   content: url("/assets/images/report.png");
   display: block;
@@ -434,7 +471,6 @@ receive snippet-selected report {
   right: 6px;
   top: 6px;
 }
-
 receive snippet-selected control-box {
   display: block;
   position: absolute;
@@ -446,11 +482,9 @@ receive snippet-selected control-box {
   border-radius: 12px;
   transform: translate(-50%, -50%);
 }
-
 receive snippet-selected control-box a {
   cursor: pointer;
 }
-
 receive snippet-selected control-box trash-it {
   content: url("/assets/images/bin.png");
   display: block;
@@ -461,7 +495,6 @@ receive snippet-selected control-box trash-it {
   left: 10%;
   transform: translate(0%, -50%);
 }
-
 receive snippet-selected control-box forward-it {
   content: url("/assets/images/plane-mail.png");
   display: block;
@@ -484,13 +517,17 @@ login {
   margin-top: 80px;
   background-color: #2f4550;
 }
-
 login h1 {
   color: #b8dbd9;
   font-size: 100px;
   margin-bottom: 10px;
 }
-
+login h2 {
+  color: #b8dbd9;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 login holder {
   display: block;
   position: absolute;
@@ -501,7 +538,6 @@ login holder {
   width: auto;
   z-index: 5;
 }
-
 login input {
   width: 200px;
   height: 14px;
@@ -512,13 +548,11 @@ login input {
   font-size: 22px;
   color: #2f4550;
 }
-
 login button {
   margin-top: 10px;
   background-color: #b8dbd9;
   border-radius: 6px;
 }
-
 login .button:hover {
   background-color: #2f4550;
 }
@@ -533,13 +567,16 @@ register {
   margin-top: 80px;
   background-color: #2f4550;
 }
-
 register h1 {
   color: #b8dbd9;
   font-size: 100px;
   margin-bottom: 10px;
 }
-
+register h2 {
+  color: #b8dbd9;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
 register holder {
   display: block;
   position: absolute;
@@ -550,7 +587,6 @@ register holder {
   width: auto;
   z-index: 5;
 }
-
 register input {
   width: 200px;
   height: 14px;
@@ -561,13 +597,11 @@ register input {
   font-size: 22px;
   color: #2f4550;
 }
-
 register button {
   margin-top: 10px;
   background-color: #b8dbd9;
   border-radius: 6px;
 }
-
 register .button:hover {
   background-color: #2f4550;
 }
@@ -579,19 +613,16 @@ send {
   height: 100vh;
   background-image: radial-gradient(circle, #2f4550 70%, #b8dbd9, #2f4550, #2f4550);
 }
-
 send form {
   padding-top: 100px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
 }
-
 send form p {
   color: #b8dbd9;
   font-family: OpenSansItalic;
 }
-
 send form box-input {
   display: block;
   width: 400px;
@@ -608,18 +639,15 @@ send form box-input {
   background-size: cover;
   transition: all 0.4s;
 }
-
 send form box-input input {
   width: 380px;
   height: 180px;
   opacity: 0;
   cursor: pointer;
 }
-
 send form box-input:hover {
   border: 8px dashed #b8dbd9;
 }
-
 send form input {
   width: 200px;
   height: 14px;
@@ -630,7 +658,6 @@ send form input {
   font-size: 22px;
   color: #2f4550;
 }
-
 send form button {
   background-image: url("/assets/images/send-button.png");
   background-position: 50% 50%;
@@ -644,7 +671,6 @@ send form button {
   transition: all 0.4s;
   cursor: pointer;
 }
-
 send form button:hover {
   border: 4px solid #b8dbd9;
 }

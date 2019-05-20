@@ -9,7 +9,7 @@ html(lang=lang)
 
     // Big bar on top with navigation utilities.
     header
-      a(href="/")
+      a(href="/index")
         logo
       ul
         li
@@ -20,19 +20,21 @@ html(lang=lang)
           a.color-light(href="send") Send
         li.nav-item
           a(href="stats") Stats
+        li
+          a(href="logout") Log Out
 
     send
-      form(method='post' action='/send')
+      form(method='post' action='/send' class="m-page scene_element scene_element--fadein")
         br
-        input.shadow(type="text" name="title" placeholder="Snippet Title" required autofocus)
+        input.shadow(id="description" type="text" name="title" placeholder="Snippet Title" required autofocus)
         br
         br
-        box-input(id="snippet-file-container")
-          input.shadow(id="snippet-file-input" type="file" name="fileupload" required)
+        box-input(id="snippetFileContainer")
+          input.shadow(id="snippetFileInput" type="file" name="fileupload" required)
           holder
             plus
-        p From jhon
-        button(type="send")
+        p From James
+        button(id="send" type="submit")
   
   +create-footer
   

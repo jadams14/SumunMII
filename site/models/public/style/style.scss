@@ -130,6 +130,27 @@ img {
   box-shadow: 0 2px 4px $color-shadow;
 }
 
+.scene_element {
+  animation-duration: 2s;
+  transition-timing-function: ease-in;
+  animation-fill-mode: both;
+}
+
+.scene_element--fadein {
+  animation-name: fadeIn;
+}
+
+/** An element that fades in and slides up */
+.scene_element--fadeinup {
+  animation-name: fadeInUp;
+}
+
+/** An element that fades in and slides from the right */
+.scene_element--fadeinright {
+  animation-name: fadeInRight;
+}
+
+
 /* Animations --------------------------------------------------------------- */
 
 @keyframes shake {
@@ -149,6 +170,43 @@ img {
     transform: translate(0%, 0%) rotate(0deg);
   }
 }
+
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 
 @keyframes spin {
   100% {
@@ -249,6 +307,8 @@ index {
   border-radius: 6px;
   padding: 10px;
 
+
+
   house {
     content: url("/assets/images/simun-logo.png");
     display: block;
@@ -289,7 +349,18 @@ index {
     height: 3%;
     width: auto;
     z-index: 5;
+    // animation: spin 10s linear infinite;
+  }
+
+  mail:hover {
     animation: spin 10s linear infinite;
+    animation-iteration-count: infinite;
+  }
+
+  h2 {
+    color: $color-dark;
+    font-size: 70px;
+    vertical-align: center;
   }
 
   text-box {
@@ -338,6 +409,7 @@ index {
       z-index: 6;
       margin: 2%;
       transform: translate(-50%, -50%);
+      animation: opacity-oscillate 1s linear infinite;
       cursor: pointer;
       visibility: hidden;
     }
@@ -354,6 +426,23 @@ receive {
     background-color: $color-dark;
     border-collapse: separate;
     border-spacing: 1.5px 1.5px;
+
+    table-scroll {
+      position: relative;
+      max-width: 1280px;
+      width: 100%;
+      margin: auto;
+      display: block;
+    }
+
+    table-wrap {
+      width: 100%;
+      display: block;
+      height: 300px;
+      overflow: auto;
+      position: relative;
+      z-index: 1;
+    }
 
     row {
       cursor: pointer;
@@ -397,9 +486,15 @@ receive {
     }
   }
 
+  h1 {
+    color: $color-light;
+    font-size: 100px;
+    text-align: center;
+  }
+
   snippet-selected {
     display: block;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 28%;
     right: 0;
@@ -410,7 +505,6 @@ receive {
     padding: 10px;
 
     info {
-
       description {
         display: block;
         position: absolute;
@@ -512,6 +606,13 @@ login {
     margin-bottom: 10px;
   }
 
+  h2 {
+    color: $color-light;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
   holder {
     display: block;
     position: absolute;
@@ -545,7 +646,7 @@ login {
   }
 }
 
-receive {
+register {
   display: block;
   position: absolute;
   top: 0;
@@ -558,6 +659,12 @@ receive {
   h1 {
     color: $color-light;
     font-size: 100px;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    color: $color-light;
+    font-size: 20px;
     margin-bottom: 10px;
   }
 
