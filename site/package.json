@@ -41,6 +41,7 @@
     "pug-cli": "^1.0.0-alpha6",
     "redis": "^2.8.0",
     "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "sass": "^1.17.4",
     "sql": "^0.78.0",
     "sqlite3": "^4.0.6",

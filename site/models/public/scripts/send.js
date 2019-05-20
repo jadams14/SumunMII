@@ -6,11 +6,12 @@ var $ = function (id) {
 var fileField = $('snippet-file-input')
 var fileBackground = $('snippet-file-container')
 
+// fileField.onclick = ()
 // When someone uploads a file, select the file being uploaded.
-fileField.addEventListener('change', (e) => {
+$('snippet-file-input').addEventListener('change', (e) => {
   // The multiple field is not allowed, so the file will always be at the 0th index.
-  var selectedFile = fileField.files[0]
-  console.log("Gets HERE")
+  var selectedFile = $('snippet-file-input').files[0]
+  console.log("Gets HERE", selectedFile)
   // Once the file has loaded, read it.
   var reader = new window.FileReader()
   reader.readAsDataURL(selectedFile)
