@@ -25,30 +25,28 @@ function setActive(counter) {
     $('selected-description').innerHTML = snippet.description
 
     // Update trash it and forward it buttons.
-    $('forward-it').onclick = () => {
-      console.log('forward-it button pressed')
-      tools.forwardSnippet(snippet.id, (err, response) => {
-        if (err) {
-          console.log('Error forwarding snippet', err)
-          return
-        }
-        console.log('Snippet successfully forwarded')
-      })
-      location.reload(true)
-    }
-    $('trash-it').onclick = () => {
-      console.log('trash-it button pressed')
-      console.log("This is the snippet id", snippet.id)
-      tools.deleteSnippet(snippet.id, (err, response) => {
-        if (err) {
-          console.log('Error deleting snippet', err)
-          return
-        }
-        console.log('Snippet successfully deleted')
-      })
-      location.reload(true)
-      // Need to make the functionality to delete a snippet
-    }
+    // $('forward-it').onclick = async function () {
+    //   console.log('forward-it button pressed')
+    //   tools.forwardSnippet(counter, (err, response) => {
+    //     if (err) {
+    //       console.log('Error forwarding snippet', err)
+    //       return
+    //     }
+    //     console.log('Snippet successfully forwarded')
+    //   })
+    //   // setTimeout(location.reload(true), 10000)
+    // }
+    // $('trash-it').onclick = async function () {
+    //   console.log('trash-it button pressed')
+    //   tools.deleteSnippet(counter, (err, response) => {
+    //     if (err) {
+    //       console.log('Error deleting snippet', err)
+    //       return
+    //     }
+    //     console.log('Snippet successfully deleted')
+    //   })
+    //     setTimeout(location.reload(true), 1000)
+    // }
   })
 
   // Unhighlight the current selector and highlight the selected
@@ -116,7 +114,7 @@ function retrieveSnippetContent(id, _callback) {
 function deleteSnippet(snippetid, _callback) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
-    uri: 'http://localhost:7000/deleteSnippet/',
+    uri: 'http://localhost:7000/receive/deleteSnippet/',
     body: JSON.stringify({
       snippetid: snippetid
     }),
@@ -156,6 +154,7 @@ function forwardSnippet(snippetid, _callback) {
     }
     console.log('tools: error to client: ', err)
     console.log('tools: body response to client: ', res.body)
+    // res.render('/receive')
     return res.body
   })
 }

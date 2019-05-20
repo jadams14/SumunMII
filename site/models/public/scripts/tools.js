@@ -28,7 +28,7 @@ function retrieveSnippetContent(id, _callback) {
 function deleteSnippet(snippetid, _callback) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
-    uri: 'http://localhost:7000/deleteSnippet/',
+    uri: 'http://localhost:7000/receive/deleteSnippet/',
     body: JSON.stringify({
       snippetid: snippetid
     }),
@@ -68,6 +68,7 @@ function forwardSnippet(snippetid, _callback) {
     }
     console.log('tools: error to client: ', err)
     console.log('tools: body response to client: ', res.body)
+    // res.render('/receive')
     return res.body
   })
 }

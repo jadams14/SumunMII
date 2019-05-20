@@ -10,10 +10,11 @@ var fileBackground = $('snippet-file-container')
 fileField.addEventListener('change', (e) => {
   // The multiple field is not allowed, so the file will always be at the 0th index.
   var selectedFile = fileField.files[0]
-
+  console.log("Gets HERE")
   // Once the file has loaded, read it.
   var reader = new window.FileReader()
   reader.readAsDataURL(selectedFile)
+  // console.log(reader.readAsDataURL(selectedFile))
   reader.onload = (e) => {
     fileBackground.style.backgroundImage = 'url(' + e.target.result + ')'
 

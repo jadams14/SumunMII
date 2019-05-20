@@ -38,6 +38,8 @@ module.exports = {
   removeSnippetContent: removeSnippetContent
 }
 
+let db = connectDatabase()
+
 // Connect to the database
 function connectDatabase(testMode = false) {
   return new sqlite3.Database(testMode ? testsDbPath : dbPath, sqlite3.OPEN_READWRITE, (err) => {
@@ -71,7 +73,7 @@ async function compareHash(plaintext, hash) {
 /// ///////////////////////////////////////////////
 // Generic SQL instruction that returns whatever is returned by the query.
 function sqlGet(sqlCode, lookup, testMode = false) {
-  let db = connectDatabase(testMode)
+  // let db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.all(sqlCode, lookup, function (err, result) {
@@ -81,14 +83,14 @@ function sqlGet(sqlCode, lookup, testMode = false) {
           resolve(result)
         }
       })
-      closeDatabase(db)
+      // closeDatabase(db)
     })
   })
 }
 
 // Generic SQL instruction that returns whatever the new ID inserted is.
 function sqlPut(sqlCode, sqlData, testMode = false) {
-  var db = connectDatabase(testMode)
+  // var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.run(sqlCode, sqlData, function (err, result) {
@@ -98,7 +100,7 @@ function sqlPut(sqlCode, sqlData, testMode = false) {
           resolve(this.lastID)
         }
       })
-      closeDatabase(db)
+      // closeDatabase(db)
     })
   })
 }
@@ -106,7 +108,7 @@ function sqlPut(sqlCode, sqlData, testMode = false) {
 // Generic SQL instruction that returns whatever the new ID inserted is.
 function sqlDelete(sqlCode, sqlData, testMode = false) {
   console.log("Gets Here")
-  var db = connectDatabase(testMode)
+  // var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.run(sqlCode, sqlData, function (err, result) {
@@ -116,7 +118,7 @@ function sqlDelete(sqlCode, sqlData, testMode = false) {
           resolve(this.lastID)
         }
       })
-      closeDatabase(db)
+      // closeDatabase(db)
     })
   })
 }
@@ -124,7 +126,7 @@ function sqlDelete(sqlCode, sqlData, testMode = false) {
 // Returns a random entry from the table specified.
 function sqlGetRandom(table, testMode = false) {
   var sqlCode = 'SELECT * FROM ' + table + ' ORDER BY RANDOM() LIMIT 1'
-  var db = connectDatabase(testMode)
+  // var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.all(sqlCode, function (err, result) {
@@ -134,7 +136,7 @@ function sqlGetRandom(table, testMode = false) {
           resolve(result)
         }
       })
-      closeDatabase(db)
+      // closeDatabase(db)
     })
   })
 }
@@ -152,21 +154,21 @@ async function checkPassword(hash, original, salt) {
 async function createLoginUser(username, password, salt, redirectid, testMode = false) {
   var sqlData = [username, password, salt, redirectid]
   var sqlCode = 'INSERT INTO login (username, password, salt, redirectid) VALUES (?, ?, ?, ?)'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
-function updateUserPassword(loginid, newPassword, testMode = false) {
+async function updateUserPassword(loginid, newPassword, testMode = false) {
   var salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7)
   newPassword = hashEntry(newPassword + salt)
   var sqlData = [newPassword, loginid]
   var sqlCode = 'UPDATE login SET password = ? WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
-function removeUser(loginid, testMode = false) {
+async function removeUser(loginid, testMode = false) {
   var sqlData = [loginid]
   var sqlCode = 'DELETE FROM login WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 /// ///////////////////////////////////////////////
@@ -183,9 +185,9 @@ async function getCurrentUser(req, res) {
 
 // Retrieves a user's login data given their username.
 // TODO: Remove this and compare hashes directly without returning full user data.
-function getUserData(username, testMode = false) {
+async function getUserData(username, testMode = false) {
   var sqlCode = 'SELECT * FROM Login WHERE username = ?'
-  return sqlGet(sqlCode, username, testMode)
+  return await sqlGet(sqlCode, username, testMode)
 }
 
 async function createUser(username, password, testMode = false) {
@@ -220,7 +222,7 @@ async function getUserByAlias(alias, testMode = false) {
   let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
     return res[0]
   })
-  console.log('Gets Here')
+  console.log('Gets Here Alias')
   let sqlCode = 'SELECT * FROM login WHERE redirectid = ?'
   let username = await sqlGet(sqlCode, redirect.id, testMode).then(res => {
     return res[0].username
@@ -235,25 +237,25 @@ async function getUserByAlias(alias, testMode = false) {
 async function createRedirect(alias, roleid, testMode = false) {
   var sqlData = [alias, '[]', roleid]
   var sqlCode = 'INSERT INTO redirect (alias, snippetids, roleid) VALUES (?, ?, ?)'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 async function getRedirect(redirectid, testMode = false) {
   console.log('Gets Into Here')
   var sqlCode = 'SELECT * FROM redirect WHERE id = ?'
-  return sqlGet(sqlCode, redirectid, testMode)
+  return await sqlGet(sqlCode, redirectid, testMode)
 }
 
 async function getRedirectViaAlias(alias, testMode = false) {
   var sqlCode = 'SELECT * FROM  redirect WHERE alias = ?'
-  return sqlGet(sqlCode, alias, testMode)
+  return await sqlGet(sqlCode, alias, testMode)
 }
 
 
 async function removeRedirect(redirectid, testMode = false) {
   var sqlData = [redirectid]
   var sqlCode = 'DELETE FROM redirect WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 /// ///////////////////////////////////////////////
@@ -270,32 +272,42 @@ async function addSnippetToUser(redirectid, snippetid, testMode = false) {
   currentSnippets = currentSnippets + ', "' + redirectid + '"]'
   var sqlData = [redirectid, currentSnippets]
   var sqlCode = 'UPDATE snippetids FROM snippet WHERE redirectid = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 async function updateRedirectSnippetList(redirectid, snippetids, testMode = false) {
   var sqlData = [snippetids, redirectid]
   var sqlCode = 'UPDATE redirect SET snippetids = ? WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  console.log("Gets Here Redirect Snippet List")
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
-async function deleteSnippet(snippetid, req, res, testMode = false) {
-  console.log("Gets Here")
-  let alias = await getCurrentUser(req, res)
+async function deleteSnippet(index, req, res, testMode = false) {
+  console.log("snippetid", index)
+  let alias = await getCurrentUser(req, res).then(res => {
+    return res
+  })
   console.log(alias)
-  let redirect = await getRedirectViaAlias(alias, testMode)
-  console.log(redirect)
-  var snippetList = JSON.parse(redirect.snippetids)
-  console.log(snippetList)
+  let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
+    return res[0]
+  })
+  // console.log("redirect", redirect)
+  console.log("snippetList", redirect)
+  let snippetList = JSON.parse(redirect.snippetids)
+  console.log("snippetList", snippetList)
   if (snippetList.length == 1) {
     snippetList = []
   } else {
-    snippetList.splice(snippetList.indexOf(snippetid.toString()), 1)
+    snippetList.splice(index, 1)
   }
   snippetList = JSON.stringify(snippetList)
+  console.log("After", snippetList)
+  console.log(redirect.id)
   return await updateRedirectSnippetList(redirect.id, snippetList, testMode).then(res => {
+    console.log("result", res)
     return res
   })
+
   // var sqlCode = 'DELETE FROM snippet WHERE id = ?'
   // console.log("Snippet Id to be deleted", redirect.id)
 
@@ -306,13 +318,13 @@ async function deleteSnippet(snippetid, req, res, testMode = false) {
 async function getSnippet(snippetid, testMode = false) {
   console.log('Get Snippet ID: ' + snippetid)
   var sqlCode = 'SELECT * FROM snippet WHERE id = ?'
-  return sqlGet(sqlCode, snippetid, testMode)
+  return await sqlGet(sqlCode, snippetid, testMode)
 }
 
 async function removeSnippet(snippetid, testMode = false) {
   var sqlData = [snippetid]
   var sqlCode = 'DELETE FROM snippet WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 async function createSnippet(content, description, redirectid, testMode = false) {
@@ -343,110 +355,110 @@ async function createSnippet(content, description, redirectid, testMode = false)
   return snippetID
 }
 
-async function forwardSnippet(snippetcontentid, testMode = false) {
+async function forwardSnippet(index, req, res, testMode = false) {
   // Retrieve the current snippet.
 
   // var currentSnippet = await getSnippetContent(snippetcontentid, testMode).then(res => {
   //   return res[0]
   // })
   // console.log(currentSnippetContent)
-  var currentSnippet = await getSnippetByContentID(snippetcontentid, testMode).then(res => {
-    return res[0]
-  })
-  console.log(currentSnippet)
   // Retrieve the redirect corresponding to the redirectid.
-  var fromRedirect = await getRedirect(currentSnippet.redirectid, testMode).then(res => {
+  let alias = await getCurrentUser(req, res).then(res => {
+    return res
+  })
+  console.log(alias)
+  let fromRedirect = await getRedirectViaAlias(alias, testMode).then(res => {
     return res[0]
   })
-
+  var snippetid = JSON.parse(fromRedirect.snippetids)
+  snippetid = snippetid[index]
+  console.log("fromRedirect", snippetid)
   // Retrieve the redirect of two random users.
   var toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
     return res[0]
   })
+  console.log("Beffore", toRedirect0)
 
-  while (toRedirect0.id != fromRedirect.id) {
+  while (toRedirect0.id == fromRedirect.id) {
     toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
       return res[0]
     })
   }
+  console.log("After", toRedirect0)
 
   var toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
     return res[0]
   })
 
-  while (toRedirect1.id != fromRedirect.id) {
+  console.log("Beffore", toRedirect1)
+  while (toRedirect1.id == fromRedirect.id && toRedirect1.id == toRedirect0.id) {
     toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
       return res[0]
     })
   }
-
-  // Create two new snippets with the same content, belonging to the two different
-  // toRedirects and from the fromRedirect.
-  var sqlCode = 'INSERT INTO snippet (contentid, redirectid, firstowner, previousowner, forwardcount) VALUES (?, ?, ?, ?, ?)'
-  var sqlData = [currentSnippet.contentid, toRedirect0.id, currentSnippet.firstowner, fromRedirect.id, currentSnippet.forwardcount + 1]
-  var newSnippetID0 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
-    return res
-  })
-  sqlData = [currentSnippet.contentid, toRedirect1.id, currentSnippet.firstowner, fromRedirect.id, currentSnippet.forwardcount + 1]
-  var newSnippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
-    return res
-  })
+  console.log("After", toRedirect1)
 
   // Append the snippet ID to each of the toRedirects list of snippet IDs.
   var snippetList = JSON.parse(toRedirect0.snippetids)
-  snippetList.push(newSnippetID0.toString())
+  console.log("3B", snippetList, snippetid)
+  snippetList.push(snippetid.toString())
   snippetList = JSON.stringify(snippetList)
+  console.log("3A", snippetList)
   await updateRedirectSnippetList(toRedirect0.id, snippetList, testMode).then(res => {
+    console.log("3 done", res)
     return res
   })
 
   snippetList = JSON.parse(toRedirect1.snippetids)
-  snippetList.push(newSnippetID1.toString())
+  console.log("4B", snippetList)
+  snippetList.push(snippetid.toString())
   snippetList = JSON.stringify(snippetList)
+  console.log("4A", snippetList)
   await updateRedirectSnippetList(toRedirect1.id, snippetList, testMode).then(res => {
+    console.log("4 done", res)
     return res
   })
 
   // Remove the snippet ID in the original redirects list of snippet IDs.
   snippetList = JSON.parse(fromRedirect.snippetids)
+  console.log("5B", snippetList)
   if (snippetList.length == 1) {
     snippetList = []
   } else {
-    snippetList.splice(snippetList.indexOf(currentSnippet.id.toString()), 1)
+    snippetList.splice(index, 1)
   }
   snippetList = JSON.stringify(snippetList)
+  console.log("5A", snippetList)
   await updateRedirectSnippetList(fromRedirect.id, snippetList, testMode).then(res => {
+    console.log("5 done", res)
     return res
   })
-
+  console.log("All done")
   // Remove the original snippet
-  await removeSnippet(currentSnippet.id, testMode).then(res => {
-    return res
-  })
+  // await removeSnippet(currentSnippet.id, testMode).then(res => {
+  //   console.log("6 done")
+  //   return res
+  // })
 
-  return [newSnippetID0, newSnippetID1]
+  return snippetid
 }
 
 /// ///////////////////////////////////////////////
 // Snippet Content Related Calls.
 /// ///////////////////////////////////////////////
 
-function getSnippetList(redirectid, testMode = false) {
-
-}
-
-function getSnippetContent(snippetcontentid, testMode = false) {
+async function getSnippetContent(snippetcontentid, testMode = false) {
   var sqlCode = 'SELECT * FROM snippetcontent WHERE id = ?'
-  return sqlGet(sqlCode, snippetcontentid, testMode)
+  return await sqlGet(sqlCode, snippetcontentid, testMode)
 }
 
-function getSnippetByContentID(snippetcontentid, testMode = false) {
+async function getSnippetByContentID(snippetcontentid, testMode = false) {
   var sqlCode = 'SELECT * FROM snippet WHERE contentid = ?'
-  return sqlGet(sqlCode, snippetcontentid, testMode)
+  return await sqlGet(sqlCode, snippetcontentid, testMode)
 }
 
-function removeSnippetContent(snippetcontentid, testMode = false) {
+async function removeSnippetContent(snippetcontentid, testMode = false) {
   var sqlData = [snippetcontentid]
   var sqlCode = 'DELETE FROM snippetcontent WHERE id = ?'
-  return sqlPut(sqlCode, sqlData, testMode)
+  return await sqlPut(sqlCode, sqlData, testMode)
 }
