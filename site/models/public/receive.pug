@@ -18,35 +18,39 @@ html(lang=lang)
           a.color-light(href="receive") Receive
         li
           a(href="send") Send
-        li.nav-item
+        li
           a(href="stats") Stats
+        li
+          a(href="logout") Log Out
 
     receive
-
-      snippet-list
-        for snippetcontent, index in snippetcontents
-          row 
-            a(id="select-"+index)
-              snippet(href="index" id=snippetcontent.id)
-                info
-                  description #{snippetcontent.description}
-                  br
-                  from jhon
-                img(src=snippetcontent.content)
-      
-      snippet-selected
-        info
-          description(id="selected-description")
-          br
-          from(id="selected-author")
-        img(id="selected-content")
-        a(href="" title="Report")
-          report
-        control-box
-          a(id="trash-it" title="Trash it")
-            trash-it
-          a(id="forward-it" title="Forward it")
-            forward-it
+      h1(class="m-page scene_element scene_element--fadeinup")=noSnippetMessage 
+      form(class="m-page scene_element scene_element--fadein")
+        if (snippetcontents != null && snippetcontents.length != 0)
+          snippet-list(class="table-scroll")
+            form(class="table-wrap")
+              for snippetcontent, index in snippetcontents
+                row 
+                  a(id="select-"+index)
+                    snippet(href="index" id=snippetcontent.id)
+                      info
+                        description #{snippetcontent.description}
+                        br
+                        from jadams
+                      img(src=snippetcontent.content)
+          snippet-selected
+            info
+              description(id="selected-description")
+              br
+              from(id="selected-author")
+            img(id="selected-content")
+            a(href="" title="Report")
+              report
+            control-box
+              a(id="trash-it" title="Trash It")
+                trash-it
+              a(id="forward-it" title="Forward It")
+                forward-it
 
   +create-footer
   

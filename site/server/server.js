@@ -2,7 +2,6 @@ var path = require('path')
 const express = require('express')
 var bodyParser = require('body-parser')
 var database = require('./database.js')
-var Cookies = require('cookies')
 const app = express()
 var router = express.Router()
 const request = require('request')
@@ -11,6 +10,9 @@ const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
 var https = require('https')
+var imgurUploader = require('imgur-uploader')
+var FileReader = require('filereader')
+
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
   connectToServer: connectToServer,
@@ -44,6 +46,18 @@ async function connectToServer() {
 /// ///////////////////////////////////////////////
 // Non page requests.
 /// ///////////////////////////////////////////////
+
+router.get('deleteSnippet/:snippetid', (req, res) => {
+  let result = database.deleteSnippet(snippetid, req, res, false).then(res => {
+    return res[0]
+  })
+  return result
+})
+
+router.get('/logout', (req, res) => {
+  res.cookie('currentUser', '')
+  res.render('login')
+})
 
 router.get('/snippetcontent/:id', (req, res) => {
   console.log('server: Retrieving snippet content with id:', req.params.id)
@@ -91,37 +105,53 @@ router.get('/stats', function (req, res) {
 
 // The next 2 requests include the authentication
 // Of the current user
-router.get('/', (req, res) => {
+router.get('/', async function (req, res) {
   try {
-    var token = new Cookies(req, res).get('currentUser')
-    let decoded = jwt.verify(token, config.secret)
-    verifyUserViaAlias(res, res, decoded.data)
+    let alias = await database.getCurrentUser(req, res).then(res => {
+      return res
+    })
+    verifyUserViaAlias(res, res, alias)
   } catch (e) {
     res.render('login')
   }
 })
 
-router.get('/login', (req, res) => {
+router.get('/login', async function (req, res) {
+  // if (config.loggedOut == true) {
+  //   res.render('login')
+  // }
   try {
-    var token = new Cookies(req, res).get('currentUser')
-    let decoded = jwt.verify(token, config.secret)
-    verifyUserViaAlias(res, res, decoded.data)
+    let alias = await database.getCurrentUser(req, res).then(res => {
+      return res
+    })
+    console.log("alias " + alias)
+    verifyUserViaAlias(res, res, alias)
   } catch (e) {
     res.render('login')
   }
 })
 
-router.get('/receive', (req, res) => {
+router.get('/receive', async function (req, res) {
   var clientVariables = {}
   clientVariables.snippetcontents = []
-  var redirectID = 0
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
+  })
+  console.log(alias)
   // Need to load snippet data from the database to display on the page.
-  database.getRedirect(redirectID).then(redirect => {
+  database.getRedirectViaAlias(alias).then(redirect => {
     redirect = redirect[0]
+    console.log(redirect)
     var snippets = JSON.parse(redirect.snippetids)
+    if (snippets == null || snippets.length == 0) {
+      res.render('receive', {
+        noSnippetMessage: 'You currently don\'t have any snippets!'
+      })
+    }
     console.log(snippets)
     // For each snippet, retrieve the snippet content ID.
     snippets.forEach((entry, index) => {
+      console.log('1')
       database.getSnippet(entry).then(snippet => {
         snippet = snippet[0]
 
@@ -160,19 +190,32 @@ router.get('/stats', (req, res) => {
   res.render('stats')
 })
 
+router.post('/send', (req, res) => {
+  console.log('Gets Here')
+  console.log(req.body.fileupload)
+  var reader = new FileReader()
+  console.log(reader.readAsDataURL(req.body.fileupload))
+  // imgurUploader(fs.readFileSync(res.body.snippetfileinput), {
+  //   title: 'Hello!'
+  // }).then(data => {
+  //   console.log(data);
+  // })
+  res.render('send')
+})
+
 // Login authentication
 // Gets the username and password of input and calls authentication function
 router.post('/login', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
-  if (req.body.button === "login") {
-    if (username === "" || password === "") {
+  if (req.body.button === 'login') {
+    if (username === '' || password === '') {
       res.render('login', {
-        lMessage: "Please Enter Username and/or Password!"
+        lMessage: 'Please Enter Username and/or Password!'
       })
     }
     await authenticate(res, req, username, password)
-  } else if (req.body.button == "register") {
+  } else if (req.body.button == 'register') {
     res.redirect('register')
   }
 })
@@ -181,25 +224,26 @@ router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
   var confirmPassword = req.body.confirmPassword
-  if (req.body.button === "register") {
-    if (username === "" || password === "" || confirmPassword === "") {
+  if (req.body.button === 'register') {
+    if (username === '' || password === '' || confirmPassword === '') {
       res.render('register', {
-        rMessage: "Please Enter Username, Password and/or Confirm Your Password!"
+        rMessage: 'Please Enter Username, Password and/or Confirm Your Password!'
       })
     } else if (password === confirmPassword &&
       (await database.getUserByUsername(username) === false)) {
       database.createUser(username, password)
       res.render('login', {
-        lMessage: "Please Login Using Your New Credentials!"
+        lMessage: 'Please Login Using Your New Credentials!'
       })
     }
-  } else if (req.body.button == "cancel") {
+  } else if (req.body.button == 'cancel') {
     res.redirect('/login')
   }
 })
 
 async function verifyUserViaAlias(res, req, alias) {
   var authentication = database.getRedirectViaAlias(alias, false)
+  console.log(authentication)
   authentication.then(async function (result) {
     if (result.length > 0) {
       if (
@@ -237,12 +281,12 @@ async function authenticate(res, req, username, password) {
         })
       } else {
         res.render('login', {
-          rMessage: "Please Enter Username, Password and/or Confirm Your Password!"
+          rMessage: 'Please Enter Username, Password and/or Confirm Your Password!'
         })
       }
     } else {
       res.render('login', {
-        rMessage: "Wrong Username and/or Password!"
+        rMessage: 'Wrong Username and/or Password!'
       })
     }
   })

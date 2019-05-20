@@ -1,3 +1,3 @@
 $('cancel').onclick = () => {
-    res.render('/login')
+  res.render('/login')
 }

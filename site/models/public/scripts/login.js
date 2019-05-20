@@ -1,3 +1,3 @@
 $('register').onclick = () => {
-    res.render('/register')
+  res.render('/register')
 }

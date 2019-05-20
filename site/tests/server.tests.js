@@ -12,7 +12,6 @@ chai.use(chaiHttp)
 
 describe('Cookie Validation', async function () {
   it('Cookies are validated properly.', async function (done) {
-
     var token = jwt.sign({
       data: 'TestAlias2'
     }, config.secret, {

@@ -25,6 +25,7 @@ function setActive(counter) {
 
     // Update trash it and forward it buttons.
     $('forward-it').onclick = () => {
+      location.reload(true)
       console.log('forward-it button pressed')
       tools.forwardSnippet(snippet.id, (err, response) => {
         if (err) {
@@ -36,8 +37,14 @@ function setActive(counter) {
     }
     $('trash-it').onclick = () => {
       console.log('trash-it button pressed')
-      //Need to make the functionality to delete a snippet
-
+      tools.deleteSnippet(snippet.id, (err, response) => {
+        if (err) {
+          console.log('Error deleting snippet', err)
+          return
+        }
+        console.log('Snippet successfully deleted')
+      })
+      // Need to make the functionality to delete a snippet
     }
   })
 
