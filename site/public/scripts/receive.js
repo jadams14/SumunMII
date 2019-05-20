@@ -26,7 +26,6 @@ function setActive(counter) {
 
     // Update trash it and forward it buttons.
     $('forward-it').onclick = () => {
-      location.reload(true)
       console.log('forward-it button pressed')
       tools.forwardSnippet(snippet.id, (err, response) => {
         if (err) {
@@ -35,9 +34,11 @@ function setActive(counter) {
         }
         console.log('Snippet successfully forwarded')
       })
+      location.reload(true)
     }
     $('trash-it').onclick = () => {
       console.log('trash-it button pressed')
+      console.log("This is the snippet id", snippet.id)
       tools.deleteSnippet(snippet.id, (err, response) => {
         if (err) {
           console.log('Error deleting snippet', err)
@@ -45,6 +46,7 @@ function setActive(counter) {
         }
         console.log('Snippet successfully deleted')
       })
+      location.reload(true)
       // Need to make the functionality to delete a snippet
     }
   })
@@ -65,6 +67,7 @@ function assignButtons() {
     var rowItem = $(rowID)
 
     if (rowItem != null) {
+      // $('selected-description').animate = 'm-page scene_element scene_element--fadeinup'
       // Complexity here required to prevent rowItem from always being the final value of the loop.
       rowItem.onclick = ((item) => {
         return () => {
@@ -110,7 +113,7 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid, _callback) {
+function deleteSnippet(snippetid, _callback) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/deleteSnippet/',
@@ -133,7 +136,7 @@ async function deleteSnippet(snippetid, _callback) {
   })
 }
 
-async function forwardSnippet(snippetid, _callback) {
+function forwardSnippet(snippetid, _callback) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -157,7 +160,7 @@ async function forwardSnippet(snippetid, _callback) {
   })
 }
 
-async function createSnippet(content, description, redirectid, _callback) {
+function createSnippet(content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {

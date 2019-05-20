@@ -25,7 +25,6 @@ function setActive(counter) {
 
     // Update trash it and forward it buttons.
     $('forward-it').onclick = () => {
-      location.reload(true)
       console.log('forward-it button pressed')
       tools.forwardSnippet(snippet.id, (err, response) => {
         if (err) {
@@ -34,9 +33,11 @@ function setActive(counter) {
         }
         console.log('Snippet successfully forwarded')
       })
+      location.reload(true)
     }
     $('trash-it').onclick = () => {
       console.log('trash-it button pressed')
+      console.log("This is the snippet id", snippet.id)
       tools.deleteSnippet(snippet.id, (err, response) => {
         if (err) {
           console.log('Error deleting snippet', err)
@@ -44,6 +45,7 @@ function setActive(counter) {
         }
         console.log('Snippet successfully deleted')
       })
+      location.reload(true)
       // Need to make the functionality to delete a snippet
     }
   })
@@ -64,6 +66,7 @@ function assignButtons() {
     var rowItem = $(rowID)
 
     if (rowItem != null) {
+      // $('selected-description').animate = 'm-page scene_element scene_element--fadeinup'
       // Complexity here required to prevent rowItem from always being the final value of the loop.
       rowItem.onclick = ((item) => {
         return () => {

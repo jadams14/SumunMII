@@ -103,6 +103,24 @@ function sqlPut(sqlCode, sqlData, testMode = false) {
   })
 }
 
+// Generic SQL instruction that returns whatever the new ID inserted is.
+function sqlDelete(sqlCode, sqlData, testMode = false) {
+  console.log("Gets Here")
+  var db = connectDatabase(testMode)
+  return new Promise(function (resolve, reject) {
+    db.serialize(function () {
+      db.run(sqlCode, sqlData, function (err, result) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(this.lastID)
+        }
+      })
+      closeDatabase(db)
+    })
+  })
+}
+
 // Returns a random entry from the table specified.
 function sqlGetRandom(table, testMode = false) {
   var sqlCode = 'SELECT * FROM ' + table + ' ORDER BY RANDOM() LIMIT 1'
@@ -120,6 +138,8 @@ function sqlGetRandom(table, testMode = false) {
     })
   })
 }
+
+
 
 /// ///////////////////////////////////////////////
 // Login Related Calls.
@@ -260,12 +280,27 @@ async function updateRedirectSnippetList(redirectid, snippetids, testMode = fals
 }
 
 async function deleteSnippet(snippetid, req, res, testMode = false) {
-  let alias = getCurrentUser(req, res)
-  let redirect = getRedirectViaAlias(alias, testMode)
+  console.log("Gets Here")
+  let alias = await getCurrentUser(req, res)
+  console.log(alias)
+  let redirect = await getRedirectViaAlias(alias, testMode)
+  console.log(redirect)
+  var snippetList = JSON.parse(redirect.snippetids)
+  console.log(snippetList)
+  if (snippetList.length == 1) {
+    snippetList = []
+  } else {
+    snippetList.splice(snippetList.indexOf(snippetid.toString()), 1)
+  }
+  snippetList = JSON.stringify(snippetList)
+  return await updateRedirectSnippetList(redirect.id, snippetList, testMode).then(res => {
+    return res
+  })
+  // var sqlCode = 'DELETE FROM snippet WHERE id = ?'
+  // console.log("Snippet Id to be deleted", redirect.id)
 
-  var sqlCode = 'DELETE FROM snippet WHERE id = ?'
-  console.log("Snippet Id to be deleted", snippetid)
-  return sqlPut(sqlCode, snippetid, testMode)
+  // return sqlPut(sqlCode, redirect.id, testMode)
+
 }
 
 async function getSnippet(snippetid, testMode = false) {
@@ -305,8 +340,6 @@ async function createSnippet(content, description, redirectid, testMode = false)
   await updateRedirectSnippetList(fromRedirect.id, snippetList, testMode).then(res => {
     return res
   })
-
-  // var snippetIDs = await forwardSnippet(snippetID, testMode)
   return snippetID
 }
 
@@ -330,9 +363,22 @@ async function forwardSnippet(snippetcontentid, testMode = false) {
   var toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
     return res[0]
   })
+
+  while (toRedirect0.id != fromRedirect.id) {
+    toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
+      return res[0]
+    })
+  }
+
   var toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
     return res[0]
   })
+
+  while (toRedirect1.id != fromRedirect.id) {
+    toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
+      return res[0]
+    })
+  }
 
   // Create two new snippets with the same content, belonging to the two different
   // toRedirects and from the fromRedirect.

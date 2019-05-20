@@ -26,7 +26,7 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid, _callback) {
+function deleteSnippet(snippetid, _callback) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/deleteSnippet/',
@@ -49,7 +49,7 @@ async function deleteSnippet(snippetid, _callback) {
   })
 }
 
-async function forwardSnippet(snippetid, _callback) {
+function forwardSnippet(snippetid, _callback) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -73,7 +73,7 @@ async function forwardSnippet(snippetid, _callback) {
   })
 }
 
-async function createSnippet(content, description, redirectid, _callback) {
+function createSnippet(content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {

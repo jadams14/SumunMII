@@ -1,5 +1,7 @@
 // Shorthand for getting elements by ID.
-var $ = function (id) { return document.getElementById(id) }
+var $ = function (id) {
+  return document.getElementById(id)
+}
 
 console.log('Index script started.')
 
@@ -10,17 +12,17 @@ var infoTextList = ['Welcome to Simun!',
   'They can be funny, eye opening or educational; you pick',
   'The catch is, you can\'t decide who you send to or receive from',
   'Snippets are transferred completely at random',
-  'Here, try sending a snippet',
-  'Great, now see if you have received any back',
-  'And that\'s how the system goes!']
+  'Remember, once sent you won\'t be able to see them again!',
+  'Happy Memeing!'
+]
 
 var infoTextCounter = 0
 
-function updateText () {
+function updateText() {
   $('info-text').innerHTML = infoTextList[infoTextCounter]
 }
 
-function nextText () {
+function nextText() {
   // Update the text and make left arrow visible as long as as there is a next message.
   if (infoTextCounter < infoTextList.length - 1) {
     infoTextCounter += 1
@@ -34,7 +36,7 @@ function nextText () {
   }
 }
 
-function prevText () {
+function prevText() {
   // Update the text and make right arrow visible as long as as there is a previous message.
   if (infoTextCounter > 0) {
     infoTextCounter -= 1
@@ -48,8 +50,12 @@ function prevText () {
   }
 }
 
-$('arrow-right').onclick = () => { nextText() }
-$('arrow-left').onclick = () => { prevText() }
+$('arrow-right').onclick = () => {
+  nextText()
+}
+$('arrow-left').onclick = () => {
+  prevText()
+}
 
 // Enabling arrow presses using keyboard.
 document.addEventListener('keydown', function (event) {

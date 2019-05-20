@@ -47,11 +47,16 @@ async function connectToServer() {
 // Non page requests.
 /// ///////////////////////////////////////////////
 
-router.get('deleteSnippet/:snippetid', (req, res) => {
-  let result = database.deleteSnippet(snippetid, req, res, false).then(res => {
-    return res[0]
+router.get('/logout', async function (req, res) {
+  res.cookie('currentUser', '')
+  res.render('login')
+})
+
+router.post('deleteSnippet/:snippetid', async function (req, res) {
+  console.log("This is the id:", req.body.snippetid)
+  await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
+    res.send(JSON.stringify(response[0]))
   })
-  return result
 })
 
 router.get('/logout', (req, res) => {
@@ -59,23 +64,23 @@ router.get('/logout', (req, res) => {
   res.render('login')
 })
 
-router.get('/snippetcontent/:id', (req, res) => {
+router.get('/snippetcontent/:id', async function (req, res) {
   console.log('server: Retrieving snippet content with id:', req.params.id)
-  database.getSnippetContent(req.params.id).then(response => {
+  await database.getSnippetContent(req.params.id).then(response => {
     res.send(JSON.stringify(response[0]))
   })
 })
 
-router.post('/forward-snippet/', (req, res) => {
+router.post('/forward-snippet/', (async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.snippetid)
-  database.forwardSnippet(req.body.snippetid).then(res => {
+  await database.forwardSnippet(req.body.snippetid).then(res => {
     return res
   })
-})
+}))
 
-router.post('/create-snippet/', (req, res) => {
+router.post('/create-snippet/', async function (req, res) {
   console.log('server: Creating snippet with content:', req.body.content, 'description:', req.body.description, 'redirectid:', req.body.redirectid)
-  database.createSnippet(req.body.content, req.body.description, req.body.redirectid).then(res => {
+  await database.createSnippet(req.body.content, req.body.description, req.body.redirectid).then(res => {
     return res
   })
 })
@@ -95,6 +100,7 @@ router.get('/index', async function (req, res) {
 router.get('/register', function (req, res) {
   res.render('register')
 })
+
 router.get('/send', function (req, res) {
   res.render('send')
 })
