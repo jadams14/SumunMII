@@ -9,16 +9,11 @@ const jwt = require('jsonwebtoken')
 const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
-var https = require('https')
-var imgurUploader = require('imgur-uploader')
-var FileReader = require('filereader')
-var tools = require('../models/public/scripts/tools.js')
-var converts = require('./converts.js')
-var DataURI = require('datauri').promise
 const multer = require('multer');
 const upload = multer({
   dest: __dirname + '/images'
 });
+const rp = require('request-promise')
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
   connectToServer: connectToServer,
@@ -170,20 +165,18 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
       return console.log('Unable to scan directory', directoryPath)
     }
     files.forEach(function (file) {
-      // fs.rename(directoryPath + '/' + file, directoryPath + '/' + file + '.png', function (err, stats) {
-      //   if (err) {
-      //     console.log(err)
-      //   }
-      // })
       fs.readFile(directoryPath + '/' + file, async function (err, data) {
         if (err) {
           console.log(err)
         } else {
-          console.log(data)
           var base64 = data.toString('base64')
-          console.log(base64)
-          await tools.sendImage(base64, req.body.title, function (err, result) {
-            console.log(result)
+          res.render('send')
+          let resultData = await uploadImage(base64, req.body.title).then(response => {
+            return response
+          })
+          console.log(resultData)
+          await sendImageToRandomUsers(resultData, res, req).then(response => {
+
           })
         }
       })
@@ -264,6 +257,33 @@ router.post('/register', async function (req, res) {
     res.redirect('/login')
   }
 })
+
+async function uploadImage(img, fileName) {
+  // let image = await getDataUri(img, function (dataUri) {
+  //   return dataUri
+  // })
+  var requestInfo = {
+    uri: 'https://api.imgur.com/3/upload',
+    body: JSON.stringify({
+      image: img,
+      type: 'base64',
+      name: fileName,
+      title: fileName,
+      description: "Image Of " + fileName,
+
+    }),
+    method: 'POST',
+    headers: {
+      'Authorization': 'Client-ID 14127dd4a0535dc',
+      'Content-Type': 'application/json',
+    }
+  }
+  let result = await rp(requestInfo).then(response => {
+    console.log("Response", response)
+    return response
+  })
+  return result
+}
 
 async function renderReceive(req, res) {
   var clientVariables = {}
@@ -371,6 +391,41 @@ async function generateJWT(res, req, redirectid, cookieName) {
   })
   console.log(res.cookie)
   res.cookie(cookieName, token)
+}
+
+async function sendImageToRandomUsers(data, res, req) {
+
+  //Gets Current User
+  let alias = await getCurrentUser(req, res).then(res => {
+    return res
+  })
+  //Gets the redirect of current user
+  let fromRedirect = await getRedirectViaAlias(alias, testMode).then(res => {
+    return res[0]
+  })
+  var snippetid = JSON.parse(fromRedirect.snippetids)
+  snippetid = snippetid[index]
+  // Retrieve the redirect of two random users.
+  //Ensuring that there are no duplicates
+  var toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
+    return res[0]
+  })
+  while (toRedirect0.id == fromRedirect.id) {
+    toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
+      return res[0]
+    })
+  }
+
+  var toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
+    return res[0]
+  })
+
+  while (toRedirect1.id == fromRedirect.id && toRedirect1.id == toRedirect0.id) {
+    toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
+      return res[0]
+    })
+  }
+  let snippet = database.createSnippet()
 }
 
 app.use('/', router)

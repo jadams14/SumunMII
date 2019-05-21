@@ -26,25 +26,27 @@ function setActive(counter) {
     //Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      tools.forwardSnippet(counter, (err, response) => {
-        if (err) {
-          console.log('Error forwarding snippet', err)
-          return
-        }
-        console.log('Snippet successfully forwarded')
+      await tools.forwardSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error forwarding snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully forwarded')
+        location.reload(true)
       })
-      location.reload(true)
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      tools.deleteSnippet(counter, (err, response) => {
-        if (err) {
-          console.log('Error deleting snippet', err)
-          return
-        }
-        console.log('Snippet successfully deleted')
+      await tools.deleteSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error deleting snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully deleted')
+        location.reload(true)
       })
-      location.reload(true)
     }
   })
 

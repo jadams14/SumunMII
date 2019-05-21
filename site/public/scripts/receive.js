@@ -27,25 +27,27 @@ function setActive(counter) {
     //Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      tools.forwardSnippet(counter, (err, response) => {
-        if (err) {
-          console.log('Error forwarding snippet', err)
-          return
-        }
-        console.log('Snippet successfully forwarded')
+      tools.forwardSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error forwarding snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully forwarded')
+      location.reload()
       })
-      location.reload(true)
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      tools.deleteSnippet(counter, (err, response) => {
-        if (err) {
-          console.log('Error deleting snippet', err)
-          return
-        }
-        console.log('Snippet successfully deleted')
+      tools.deleteSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error deleting snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully deleted')
       })
-      location.reload(true)
+      location.reload()
     }
   })
 
@@ -97,7 +99,6 @@ module.exports = {
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
   deleteSnippet: deleteSnippet,
-  sendImage: sendImage
 }
 
 function retrieveSnippetContent(id, _callback) {
@@ -133,39 +134,7 @@ async function getDataUri(img, callback) {
   // image.src = url;
 }
 
-async function sendImage(img, fileName, _callback) {
-  // let image = await getDataUri(img, function (dataUri) {
-  //   return dataUri
-  // })
-  console.log(img)
-  var requestInfo = {
-    uri: 'https://api.imgur.com/3/upload',
-    body: JSON.stringify({
-      image: img,
-      type: 'base64',
-      name: fileName,
-    }),
-    method: 'POST',
-    headers: {
-      'Authorization': 'Client-ID 14127dd4a0535dc',
-      'Content-Type': 'application/json',
-    }
-  }
-  console.log("Image", img)
-
-  console.log("requestInfo", requestInfo)
-  request(requestInfo, (err, res, body) => {
-    if (err) {
-      console.log('tools: error forwarding snippet')
-      return false
-    }
-    console.log('tools: error to client: ', err)
-    console.log('tools: body response to client: ', body)
-    return body
-  })
-}
-
-async function deleteSnippet(snippetid, _callback) {
+async function deleteSnippet(snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -178,7 +147,7 @@ async function deleteSnippet(snippetid, _callback) {
     }
   }
 
-  await rp(requestInfo).then(async function (err, res) {
+  return await rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -189,7 +158,7 @@ async function deleteSnippet(snippetid, _callback) {
   })
 }
 
-async function forwardSnippet(snippetid, _callback) {
+async function forwardSnippet(snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -202,7 +171,7 @@ async function forwardSnippet(snippetid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  await rp(requestInfo).then(function (err, res) {
+  return await rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
