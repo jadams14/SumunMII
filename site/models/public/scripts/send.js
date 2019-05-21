@@ -6,19 +6,17 @@ var $ = function (id) {
 var fileField = $('snippet-file-input')
 var fileBackground = $('snippet-file-container')
 
-// fileField.onclick = ()
 // When someone uploads a file, select the file being uploaded.
-$('snippet-file-input').addEventListener('change', (e) => {
+fileField.addEventListener('change', (e) => {
   // The multiple field is not allowed, so the file will always be at the 0th index.
-  var selectedFile = $('snippet-file-input').files[0]
-  console.log("Gets HERE", selectedFile)
+  var selectedFile = fileField.files[0]
+
   // Once the file has loaded, read it.
   var reader = new window.FileReader()
   reader.readAsDataURL(selectedFile)
-  // console.log(reader.readAsDataURL(selectedFile))
+  // console.log("Gets Here")
   reader.onload = (e) => {
     fileBackground.style.backgroundImage = 'url(' + e.target.result + ')'
-
     // Retreive the image dimensions then scale the upload box background from there.
     var img = new window.Image()
     img.src = reader.result
@@ -34,5 +32,8 @@ $('snippet-file-input').addEventListener('change', (e) => {
         fileBackground.style.height = 200
       }
     }
+    res.send({
+      image: e.target.result
+    })
   }
 })

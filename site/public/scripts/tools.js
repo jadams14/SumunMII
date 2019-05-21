@@ -1,7 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')
-
 module.exports = {
   colorblack: '#000000',
   colordark: '#2f4550',
@@ -28,29 +27,56 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
+async function getDataUri(img, callback) {
+  // var image = new canvas;
+
+  // image.onload = function () {
+  var canvas = document.createElement('canvas');
+  var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
+  // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+  // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+  // canvas.getContext('2d').drawImage(this, 0, 0);
+
+  // Get raw image data
+  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+  // callback(dataURL)
+  // ... or get as Data URI
+  // callback(canvas.toDataURL('image/png'));
+  // };
+
+  // image.src = url;
+}
+
 async function sendImage(img, fileName, _callback) {
+  // let image = await getDataUri(img, function (dataUri) {
+  //   return dataUri
+  // })
+  console.log(img)
   var requestInfo = {
-    uri: 'http://localhost:7000/receive/deleteSnippet/',
+    uri: 'https://api.imgur.com/3/upload',
     body: JSON.stringify({
-      image: img.toString('base64'),
+      image: img,
       type: 'base64',
-      name: fileName
+      name: fileName,
     }),
     method: 'POST',
     headers: {
+      'Authorization': 'Client-ID 14127dd4a0535dc',
       'Content-Type': 'application/json',
-      Authorization: '14127dd4a0535dc'
     }
   }
-  console.log(requestInfo)
-  await rp(requestInfo).then(async function (err, res) {
+  console.log("Image", img)
+
+  console.log("requestInfo", requestInfo)
+  request(requestInfo, (err, res, body) => {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
     }
     console.log('tools: error to client: ', err)
-    console.log('tools: body response to client: ', res.body)
-    return res.body
+    console.log('tools: body response to client: ', body)
+    return body
   })
 }
 

@@ -12,7 +12,13 @@ var fs = require('fs')
 var https = require('https')
 var imgurUploader = require('imgur-uploader')
 var FileReader = require('filereader')
-
+var tools = require('../models/public/scripts/tools.js')
+var converts = require('./converts.js')
+var DataURI = require('datauri').promise
+const multer = require('multer');
+const upload = multer({
+  dest: __dirname + '/images'
+});
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
   connectToServer: connectToServer,
@@ -151,34 +157,60 @@ router.get('/stats', (req, res) => {
   res.render('stats')
 })
 
-router.post('/send', (req, res) => {
-  console.log('Gets Here send')
-  var buf = new Buffer(req.body.fileupload)
-  var base64 = buf.toString('base64')
-  console.log(base64)
+// router.post('/uploadImage', function (req, res) {
+//   console.log("Gets HEre!")
+// })
 
-  // var reader = new FileReader()
-  // console.log(reader.readAsDataURL(req.body.fileupload))
-  $.ajax({
-    url: "https://api.imgur.com/3/upload",
-    type: "POST",
-    datatype: "json",
-    data: {
-      image: base64,
-      // album: albumId
-    },
-    success: showMe,
-    error: showMe,
-    // beforeSend: function (xhr) {
-    //   xhr.setRequestHeader("Authorization", "Client-ID " + clientId);
-    // }
+router.post('/send', upload.single('fileupload'), async function (req, res) {
+  console.log("Files", req.files)
+  console.log('Gets Here send')
+  const directoryPath = path.join(__dirname, 'images')
+  fs.readdir(directoryPath, function (err, files) {
+    if (err) {
+      return console.log('Unable to scan directory', directoryPath)
+    }
+    files.forEach(function (file) {
+      // fs.rename(directoryPath + '/' + file, directoryPath + '/' + file + '.png', function (err, stats) {
+      //   if (err) {
+      //     console.log(err)
+      //   }
+      // })
+      fs.readFile(directoryPath + '/' + file, async function (err, data) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log(data)
+          var base64 = data.toString('base64')
+          console.log(base64)
+          await tools.sendImage(base64, req.body.title, function (err, result) {
+            console.log(result)
+          })
+        }
+      })
+      // tools.sendImage(file.toString('base64'))
+      fs.unlink(directoryPath + '/' + file, function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+    })
   })
-  // imgurUploader(base64, {
-  //   title: 'Hello!'
-  // }).then(data => {
-  //   console.log(data);
+  // var base64s = new Buffer(req.body.fileupload, 'base64')
+  // console.log("Buffer", base64s)
+  // var base64 = buf.toString('base64')
+  // var base64 = await DataURI(req.body.fileupload).then(response => {
+  //   console.log(response)
+  //   return response
   // })
-  // res.render('send')
+  // console.log(req.body)
+  // var base64 = req.body.fileupload.toString('base64')
+  // console.log(base64)
+  // var fileName = req.body.title
+  // console.log("Base64", base64)
+  // console.log("Name", fileName)
+  // await tools.sendImage(base64, fileName, (err, result) => {
+  //   console.log("This", result)
+  // })
 })
 
 // Login authentication
