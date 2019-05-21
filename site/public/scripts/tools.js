@@ -12,7 +12,8 @@ module.exports = {
   retrieveSnippetContent: retrieveSnippetContent,
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
-  deleteSnippet: deleteSnippet
+  deleteSnippet: deleteSnippet,
+  sendImage: sendImage
 }
 
 function retrieveSnippetContent(id, _callback) {
@@ -24,6 +25,32 @@ function retrieveSnippetContent(id, _callback) {
       return _callback(err)
     }
     return _callback(null, JSON.parse(JSON.stringify(body)))
+  })
+}
+
+async function sendImage(img, fileName, _callback) {
+  var requestInfo = {
+    uri: 'http://localhost:7000/receive/deleteSnippet/',
+    body: JSON.stringify({
+      image: img.toString('base64'),
+      type: 'base64',
+      name: fileName
+    }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: '14127dd4a0535dc'
+    }
+  }
+  console.log(requestInfo)
+  await rp(requestInfo).then(async function (err, res) {
+    if (err) {
+      console.log('tools: error forwarding snippet')
+      return false
+    }
+    console.log('tools: error to client: ', err)
+    console.log('tools: body response to client: ', res.body)
+    return res.body
   })
 }
 

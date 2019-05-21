@@ -103,8 +103,12 @@ router.get('/register', function (req, res) {
   res.render('register')
 })
 
-router.get('/send', function (req, res) {
-  res.render('send')
+router.get('/send', async function (req, res) {
+  let alias = await database.getCurrentUser(req, res)
+  let username = await database.getUserByAlias(alias, false)
+  res.render('send', {
+    from: username
+  })
 })
 
 router.get('/stats', function (req, res) {
@@ -143,26 +147,39 @@ router.get('/receive', async function (req, res) {
   await renderReceive(req, res)
 })
 
-router.get('/send', (req, res) => {
-  res.render('send')
-})
-
 router.get('/stats', (req, res) => {
   res.render('stats')
 })
 
-// router.post('/send', (req, res) => {
-//   console.log('Gets Here send')
-//   // console.log(req.body.fileupload)
-//   // var reader = new FileReader()
-//   // console.log(reader.readAsDataURL(req.body.fileupload))
-//   // imgurUploader(fs.readFileSync(res.body.snippetfileinput), {
-//   //   title: 'Hello!'
-//   // }).then(data => {
-//   //   console.log(data);
-//   // })
-//   res.render('send')
-// })
+router.post('/send', (req, res) => {
+  console.log('Gets Here send')
+  var buf = new Buffer(req.body.fileupload)
+  var base64 = buf.toString('base64')
+  console.log(base64)
+
+  // var reader = new FileReader()
+  // console.log(reader.readAsDataURL(req.body.fileupload))
+  $.ajax({
+    url: "https://api.imgur.com/3/upload",
+    type: "POST",
+    datatype: "json",
+    data: {
+      image: base64,
+      // album: albumId
+    },
+    success: showMe,
+    error: showMe,
+    // beforeSend: function (xhr) {
+    //   xhr.setRequestHeader("Authorization", "Client-ID " + clientId);
+    // }
+  })
+  // imgurUploader(base64, {
+  //   title: 'Hello!'
+  // }).then(data => {
+  //   console.log(data);
+  // })
+  // res.render('send')
+})
 
 // Login authentication
 // Gets the username and password of input and calls authentication function
