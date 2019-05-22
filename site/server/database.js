@@ -177,11 +177,15 @@ async function removeUser(loginid, testMode = false) {
 /// ///////////////////////////////////////////////
 
 async function getCurrentUser(req, res) {
-  var token = new Cookies(req, res).get('currentUser')
-  console.log("token: " + token)
-  let decoded = jwt.verify(token, config.secret)
-  console.log("data: " + decoded.data)
-  return decoded.data
+  try {
+    var token = new Cookies(req, res).get('currentUser')
+    console.log("token: " + token)
+    let decoded = jwt.verify(token, config.secret)
+    console.log("data: " + decoded.data)
+    return decoded.data
+  } catch (err) {
+    return "Unsuccessful"
+  }
 }
 
 // Retrieves a user's login data given their username.

@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken')
 const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
-var Cookies = require('cookies')
 const multer = require('multer');
 const upload = multer({
   dest: __dirname + '/images'
@@ -50,8 +49,10 @@ async function connectToServer() {
 /// ///////////////////////////////////////////////
 
 router.get('/logout', async function (req, res) {
+
   res.cookie('currentUser', '')
   res.render('login')
+
 })
 
 router.post('/receive/deleteSnippet/', async function (req, res) {
@@ -93,12 +94,18 @@ router.post('/create-snippet/', async function (req, res) {
 // Page requests.
 /// ///////////////////////////////////////////////
 router.get('/index', async function (req, res) {
-  var token = new Cookies(req, res).get('currentUser')
-  let decoded = jwt.verify(token, config.secret)
-  let username = await database.getUserByAlias(decoded.data)
-  res.render('index', {
-    user: username
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
   })
+  console.log(alias)
+  if (alias != "Unsuccessful") {
+    let username = await database.getUserByAlias(alias).then(res => {
+      return res
+    })
+    res.render('index', {
+      user: username
+    })
+  }
 })
 
 router.get('/register', function (req, res) {
@@ -106,11 +113,16 @@ router.get('/register', function (req, res) {
 })
 
 router.get('/send', async function (req, res) {
-  let alias = await database.getCurrentUser(req, res)
-  let username = await database.getUserByAlias(alias, false)
-  res.render('send', {
-    from: username
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
   })
+  console.log(alias)
+  if (alias != "Unsuccessful") {
+    let username = await database.getUserByAlias(alias, false)
+    res.render('send', {
+      from: username
+    })
+  }
 })
 
 router.get('/stats', function (req, res) {
@@ -146,11 +158,23 @@ router.get('/login', async function (req, res) {
 })
 
 router.get('/receive', async function (req, res) {
-  await renderReceive(req, res)
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
+  })
+  console.log(alias)
+  if (alias != "Unsuccessful") {
+    await renderReceive(req, res)
+  }
 })
 
-router.get('/stats', (req, res) => {
-  res.render('stats')
+router.get('/stats', async function (req, res) {
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
+  })
+  console.log(alias)
+  if (alias != "Unsuccessful") {
+    res.render('stats')
+  }
 })
 
 // router.post('/uploadImage', function (req, res) {
