@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken')
 const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
+var Cookies = require('cookies')
 const multer = require('multer');
 const upload = multer({
   dest: __dirname + '/images'
@@ -172,11 +173,11 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
           var base64 = data.toString('base64')
           res.render('send')
           let resultData = await uploadImage(base64, req.body.title).then(response => {
-            return response
+            return JSON.parse(response)
           })
-          console.log(resultData)
-          await sendImageToRandomUsers(resultData, res, req).then(response => {
-
+          console.log("Result", resultData.data)
+          await database.sendImageToRandomUsers(resultData.data, res, req, false).then(response => {
+            console.log(response)
           })
         }
       })
@@ -269,7 +270,7 @@ async function uploadImage(img, fileName) {
       type: 'base64',
       name: fileName,
       title: fileName,
-      description: "Image Of " + fileName,
+      description: fileName,
 
     }),
     method: 'POST',
@@ -279,7 +280,6 @@ async function uploadImage(img, fileName) {
     }
   }
   let result = await rp(requestInfo).then(response => {
-    console.log("Response", response)
     return response
   })
   return result
@@ -391,41 +391,6 @@ async function generateJWT(res, req, redirectid, cookieName) {
   })
   console.log(res.cookie)
   res.cookie(cookieName, token)
-}
-
-async function sendImageToRandomUsers(data, res, req) {
-
-  //Gets Current User
-  let alias = await getCurrentUser(req, res).then(res => {
-    return res
-  })
-  //Gets the redirect of current user
-  let fromRedirect = await getRedirectViaAlias(alias, testMode).then(res => {
-    return res[0]
-  })
-  var snippetid = JSON.parse(fromRedirect.snippetids)
-  snippetid = snippetid[index]
-  // Retrieve the redirect of two random users.
-  //Ensuring that there are no duplicates
-  var toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
-    return res[0]
-  })
-  while (toRedirect0.id == fromRedirect.id) {
-    toRedirect0 = await sqlGetRandom('redirect', testMode).then(res => {
-      return res[0]
-    })
-  }
-
-  var toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
-    return res[0]
-  })
-
-  while (toRedirect1.id == fromRedirect.id && toRedirect1.id == toRedirect0.id) {
-    toRedirect1 = await sqlGetRandom('redirect', testMode).then(res => {
-      return res[0]
-    })
-  }
-  let snippet = database.createSnippet()
 }
 
 app.use('/', router)
