@@ -27,7 +27,7 @@ function setActive(counter) {
     //Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      await tools.forwardSnippet(counter).then(response => {
+      tools.forwardSnippet(counter).then(response => {
         console.log(result)
         // if (err) {
         //   console.log('Error forwarding snippet', err)
@@ -39,7 +39,7 @@ function setActive(counter) {
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.deleteSnippet(counter).then(response => {
+      tools.deleteSnippet(counter).then(response => {
         console.log(result)
         // if (err) {
         //   console.log('Error deleting snippet', err)
