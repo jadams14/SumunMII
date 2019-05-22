@@ -60,7 +60,6 @@ router.post('/receive/deleteSnippet/', async function (req, res) {
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
-  console.log("Gets Here123")
 
 })
 
@@ -97,7 +96,6 @@ router.get('/index', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   if (alias != "Unsuccessful") {
     let username = await database.getUserByAlias(alias).then(res => {
       return res
@@ -116,7 +114,6 @@ router.get('/send', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   if (alias != "Unsuccessful") {
     let username = await database.getUserByAlias(alias, false)
     res.render('send', {
@@ -150,7 +147,6 @@ router.get('/login', async function (req, res) {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
     })
-    console.log("alias " + alias)
     verifyUserViaAlias(res, res, alias)
   } catch (e) {
     res.render('login')
@@ -161,7 +157,6 @@ router.get('/receive', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   if (alias != "Unsuccessful") {
     await renderReceive(req, res)
   }
@@ -171,19 +166,13 @@ router.get('/stats', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   if (alias != "Unsuccessful") {
     res.render('stats')
   }
 })
 
-// router.post('/uploadImage', function (req, res) {
-//   console.log("Gets HEre!")
-// })
 
 router.post('/send', upload.single('fileupload'), async function (req, res) {
-  console.log("Files", req.files)
-  console.log('Gets Here send')
   const directoryPath = path.join(__dirname, 'images')
   fs.readdir(directoryPath, function (err, files) {
     if (err) {
@@ -199,10 +188,7 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
           let resultData = await uploadImage(base64, req.body.title).then(response => {
             return JSON.parse(response)
           })
-          console.log("Result", resultData.data)
-          await database.sendImageToRandomUsers(resultData.data, res, req, false).then(response => {
-            console.log(response)
-          })
+          await database.sendImageToRandomUsers(resultData.data, res, req, false).then(response => {})
         }
       })
       // tools.sendImage(file.toString('base64'))
@@ -213,22 +199,6 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
       })
     })
   })
-  // var base64s = new Buffer(req.body.fileupload, 'base64')
-  // console.log("Buffer", base64s)
-  // var base64 = buf.toString('base64')
-  // var base64 = await DataURI(req.body.fileupload).then(response => {
-  //   console.log(response)
-  //   return response
-  // })
-  // console.log(req.body)
-  // var base64 = req.body.fileupload.toString('base64')
-  // console.log(base64)
-  // var fileName = req.body.title
-  // console.log("Base64", base64)
-  // console.log("Name", fileName)
-  // await tools.sendImage(base64, fileName, (err, result) => {
-  //   console.log("This", result)
-  // })
 })
 
 // Login authentication
@@ -249,7 +219,6 @@ router.post('/login', async function (req, res) {
 })
 
 router.post('/receive', async function (req, res) {
-  console.log(req.body)
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
@@ -315,25 +284,20 @@ async function renderReceive(req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   // Need to load snippet data from the database to display on the page.
   await database.getRedirectViaAlias(alias).then(async function (redirect) {
     redirect = redirect[0]
-    console.log("This is the redirect", redirect)
     var snippets = JSON.parse(redirect.snippetids)
     if (snippets == null || snippets.length == 0) {
       res.render('receive', {
         noSnippetMessage: 'You currently don\'t have any snippets!'
       })
     }
-    console.log(snippets)
     // For each snippet, retrieve the snippet content ID.
     // snippets.forEach(async function (entry, index) {
     for (var snip in snippets) {
-      console.log('1')
       await database.getSnippet(snippets[snip]).then(async function (snippet) {
         snippet = snippet[0]
-        console.log(snippet)
 
         // Retrieve the snippet content.
         await database.getSnippetContent(snippet.contentid).then(snippetcontent => {
@@ -413,7 +377,6 @@ async function generateJWT(res, req, redirectid, cookieName) {
   }, {
     algorithm: 'RS256'
   })
-  console.log(res.cookie)
   res.cookie(cookieName, token)
 }
 

@@ -108,7 +108,6 @@ function sqlPut(sqlCode, sqlData, testMode = false) {
 
 // Generic SQL instruction that returns whatever the new ID inserted is.
 function sqlDelete(sqlCode, sqlData, testMode = false) {
-  console.log("Gets Here")
   // var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
@@ -179,9 +178,7 @@ async function removeUser(loginid, testMode = false) {
 async function getCurrentUser(req, res) {
   try {
     var token = new Cookies(req, res).get('currentUser')
-    console.log("token: " + token)
     let decoded = jwt.verify(token, config.secret)
-    console.log("data: " + decoded.data)
     return decoded.data
   } catch (err) {
     return "Unsuccessful"
@@ -207,9 +204,7 @@ async function createUser(username, password, testMode = false) {
   var salt = Math.random().toString(17).substring(2, 17) + Math.random().toString(5).substring(2, 5)
   password = await hashEntry(password + salt)
   await createLoginUser(username, password, salt, redirectID)
-  console.log('Redirect ID: ' + redirectID)
   let snippet = await createSnippet('', 'Your Basic Snippet', redirectID)
-  console.log(redirectID, snippet)
   // await addSnippetToUser(redirectID, snippet.id)
 }
 
@@ -227,12 +222,10 @@ async function getUserByAlias(alias, testMode = false) {
   let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
     return res[0]
   })
-  console.log('Gets Here Alias')
   let sqlCode = 'SELECT * FROM login WHERE redirectid = ?'
   let username = await sqlGet(sqlCode, redirect.id, testMode).then(res => {
     return res[0].username
   })
-  console.log('And Here')
   return username
 }
 /// ///////////////////////////////////////////////
@@ -246,7 +239,6 @@ async function createRedirect(alias, roleid, testMode = false) {
 }
 
 async function getRedirect(redirectid, testMode = false) {
-  console.log('Gets Into Here')
   var sqlCode = 'SELECT * FROM redirect WHERE id = ?'
   return await sqlGet(sqlCode, redirectid, testMode)
 }
@@ -269,7 +261,6 @@ async function removeRedirect(redirectid, testMode = false) {
 
 async function addSnippetToUser(redirectid, snippetid, testMode = false) {
   var result = await getRedirect(snippetid, testMode).then(res => {
-    console.log(res[0] + ' ' + snippetid)
     return res[0]
   })
   var currentSnippets = result.snippetids
@@ -283,45 +274,34 @@ async function addSnippetToUser(redirectid, snippetid, testMode = false) {
 async function updateRedirectSnippetList(redirectid, snippetids, testMode = false) {
   var sqlData = [snippetids, redirectid]
   var sqlCode = 'UPDATE redirect SET snippetids = ? WHERE id = ?'
-  console.log("Gets Here Redirect Snippet List")
   return await sqlPut(sqlCode, sqlData, testMode)
 }
 
 async function deleteSnippet(index, req, res, testMode = false) {
-  console.log("snippetid", index)
   let alias = await getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log(alias)
   let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
     return res[0]
   })
-  // console.log("redirect", redirect)
-  console.log("snippetList", redirect)
   let snippetList = JSON.parse(redirect.snippetids)
-  console.log("snippetList", snippetList)
   if (snippetList.length == 1) {
     snippetList = []
   } else {
     snippetList.splice(index, 1)
   }
   snippetList = JSON.stringify(snippetList)
-  console.log("After", snippetList)
-  console.log(redirect.id)
   return await updateRedirectSnippetList(redirect.id, snippetList, testMode).then(res => {
-    console.log("result", res)
     return res
   })
 
   // var sqlCode = 'DELETE FROM snippet WHERE id = ?'
-  // console.log("Snippet Id to be deleted", redirect.id)
 
   // return sqlPut(sqlCode, redirect.id, testMode)
 
 }
 
 async function getSnippet(snippetid, testMode = false) {
-  console.log('Get Snippet ID: ' + snippetid)
   var sqlCode = 'SELECT * FROM snippet WHERE id = ?'
   return await sqlGet(sqlCode, snippetid, testMode)
 }
@@ -337,7 +317,6 @@ async function createSnippet(content, description, redirectid, testMode = false)
   var fromRedirect = await getRedirect(redirectid, testMode).then(res => {
     return res[0]
   })
-  console.log('Result of GetRedirect: ' + fromRedirect)
   // Create a new snippet content.
   var sqlCode = 'INSERT INTO snippetcontent (content, description, forwardcount) VALUES (?, ?, ?)'
   var snippetContentID = await sqlPut(sqlCode, [content, description, 0], testMode).then(res => {
@@ -397,7 +376,6 @@ async function forwardSnippet(index, req, res, testMode = false) {
       return res[0]
     })
   }
-  console.log("This is the data", currentSnippet, toRedirect0, toRedirect1)
   await splitSnippet(currentSnippet, toRedirect0, toRedirect1)
   // Remove the snippet ID in the original redirects list of snippet IDs.
   snippetList = JSON.parse(fromRedirect.snippetids)
@@ -412,7 +390,6 @@ async function forwardSnippet(index, req, res, testMode = false) {
   })
   // Remove the original snippet
   // await removeSnippet(currentSnippet.id, testMode).then(res => {
-  //   console.log("6 done")
   //   return res
   // })
   await updateForwardCount(currentSnippet.contentid, 2, testMode = false).then(res => {
@@ -468,7 +445,6 @@ async function createSnippetContent(description, url, testMode = false) {
 }
 
 async function createTwoSnippetsViaContent(snippetContent, fromRedirect, redirect0, redirect1, testMode = false) {
-  console.log(snippetContent)
   //Make the 2 new snippets using the current snippet
   //And the 2 redirects it is being assigned to
   var sqlData = [snippetContent, redirect0.id, fromRedirect.id, fromRedirect.id]
@@ -476,13 +452,11 @@ async function createTwoSnippetsViaContent(snippetContent, fromRedirect, redirec
   var snippetID0 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
-  console.log("ID0", snippetID0)
   var sqlData = [snippetContent, redirect1.id, fromRedirect.id, fromRedirect.id]
   sqlCode = 'INSERT INTO snippet (contentid, redirectid, firstowner, previousowner) VALUES (?, ?, ?, ?)'
   var snippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
-  console.log("ID1", snippetID1)
 
   // Append the snippet ID to each of the toRedirects list of snippet IDs.
   var snippetList = JSON.parse(redirect0.snippetids)
@@ -502,7 +476,6 @@ async function createTwoSnippetsViaContent(snippetContent, fromRedirect, redirec
 }
 
 async function splitSnippet(currentSnippet, redirect0, redirect1, testMode = false) {
-  console.log("Gets Here", currentSnippet)
   //Make the 2 new snippets using the current snippet
   //And the 2 redirects it is being assigned to
   var sqlData = [currentSnippet.contentid, redirect0.id, currentSnippet.firstowner, currentSnippet.redirectid]
@@ -510,13 +483,11 @@ async function splitSnippet(currentSnippet, redirect0, redirect1, testMode = fal
   var snippetID0 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
-  console.log("ID0", snippetID0)
   var sqlData = [currentSnippet.contentid, redirect1.id, currentSnippet.firstowner, currentSnippet.redirectid]
   sqlCode = 'INSERT INTO snippet (contentid, redirectid, firstowner, previousowner) VALUES (?, ?, ?, ?)'
   var snippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
     return res
   })
-  console.log("ID1", snippetID1)
 
   // Append the snippet ID to each of the toRedirects list of snippet IDs.
   var snippetList = JSON.parse(redirect0.snippetids)
