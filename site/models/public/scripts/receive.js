@@ -23,28 +23,30 @@ function setActive(counter) {
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
 
-    // Update trash it and forward it buttons.
-    $('forward-it').onclick = () => {
-      location.reload(true)
+    //Update trash it and forward it buttons.
+    $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      tools.forwardSnippet(snippet.id, (err, response) => {
-        if (err) {
-          console.log('Error forwarding snippet', err)
-          return
-        }
-        console.log('Snippet successfully forwarded')
+      await tools.forwardSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error forwarding snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully forwarded')
+        location.reload(true)
       })
     }
-    $('trash-it').onclick = () => {
+    $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      tools.deleteSnippet(snippet.id, (err, response) => {
-        if (err) {
-          console.log('Error deleting snippet', err)
-          return
-        }
-        console.log('Snippet successfully deleted')
+      await tools.deleteSnippet(counter).then(response => {
+        console.log(result)
+        // if (err) {
+        //   console.log('Error deleting snippet', err)
+        //   return
+        // }
+        // console.log('Snippet successfully deleted')
+        location.reload(true)
       })
-      // Need to make the functionality to delete a snippet
     }
   })
 
@@ -62,8 +64,9 @@ function assignButtons() {
   while (viable) {
     var rowID = 'select-' + counter
     var rowItem = $(rowID)
-
+    console.log("Gets Here")
     if (rowItem != null) {
+      // $('selected-description').animate = 'm-page scene_element scene_element--fadeinup'
       // Complexity here required to prevent rowItem from always being the final value of the loop.
       rowItem.onclick = ((item) => {
         return () => {

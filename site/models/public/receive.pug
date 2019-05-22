@@ -25,7 +25,7 @@ html(lang=lang)
 
     receive
       h1(class="m-page scene_element scene_element--fadeinup")=noSnippetMessage 
-      form(class="m-page scene_element scene_element--fadein")
+      form(class="m-page scene_element scene_element--fadein"  method="post" action="/receive")
         if (snippetcontents != null && snippetcontents.length != 0)
           snippet-list(class="table-scroll")
             form(class="table-wrap")
@@ -47,9 +47,9 @@ html(lang=lang)
             a(href="" title="Report")
               report
             control-box
-              a(id="trash-it" title="Trash It")
+              a(id="trash-it" type="submit" name="button" value="trash-it" title="Trash It" )
                 trash-it
-              a(id="forward-it" title="Forward It")
+              a(id="forward-it" type="submit" name="button" value="forward-it" title="Forward It")
                 forward-it
 
   +create-footer

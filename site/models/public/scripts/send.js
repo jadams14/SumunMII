@@ -14,9 +14,9 @@ fileField.addEventListener('change', (e) => {
   // Once the file has loaded, read it.
   var reader = new window.FileReader()
   reader.readAsDataURL(selectedFile)
+  // console.log("Gets Here")
   reader.onload = (e) => {
     fileBackground.style.backgroundImage = 'url(' + e.target.result + ')'
-
     // Retreive the image dimensions then scale the upload box background from there.
     var img = new window.Image()
     img.src = reader.result
@@ -32,5 +32,8 @@ fileField.addEventListener('change', (e) => {
         fileBackground.style.height = 200
       }
     }
+    res.send({
+      image: e.target.result
+    })
   }
 })

@@ -1,5 +1,5 @@
 const request = require('request')
-
+const rp = require('request-promise')
 module.exports = {
   colorblack: '#000000',
   colordark: '#2f4550',
@@ -10,7 +10,7 @@ module.exports = {
   retrieveSnippetContent: retrieveSnippetContent,
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
-  deleteSnippet: deleteSnippet
+  deleteSnippet: deleteSnippet,
 }
 
 function retrieveSnippetContent(id, _callback) {
@@ -25,10 +25,31 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid, _callback) {
+async function getDataUri(img, callback) {
+  // var image = new canvas;
+
+  // image.onload = function () {
+  var canvas = document.createElement('canvas');
+  var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
+  // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+  // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+  // canvas.getContext('2d').drawImage(this, 0, 0);
+
+  // Get raw image data
+  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+  // callback(dataURL)
+  // ... or get as Data URI
+  // callback(canvas.toDataURL('image/png'));
+  // };
+
+  // image.src = url;
+}
+
+async function deleteSnippet(snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
-    uri: 'http://localhost:7000/deleteSnippet/',
+    uri: 'http://localhost:7000/receive/deleteSnippet/',
     body: JSON.stringify({
       snippetid: snippetid
     }),
@@ -37,7 +58,8 @@ async function deleteSnippet(snippetid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  request(requestInfo, function (err, res) {
+
+  return await rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -48,7 +70,7 @@ async function deleteSnippet(snippetid, _callback) {
   })
 }
 
-async function forwardSnippet(snippetid, _callback) {
+async function forwardSnippet(snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -61,13 +83,14 @@ async function forwardSnippet(snippetid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  request(requestInfo, function (err, res) {
+  return await rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
     }
     console.log('tools: error to client: ', err)
     console.log('tools: body response to client: ', res.body)
+    // res.render('/receive')
     return res.body
   })
 }
@@ -87,7 +110,7 @@ async function createSnippet(content, description, redirectid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  request(requestInfo, function (err, res) {
+  await rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error creating snippet')
       return false
