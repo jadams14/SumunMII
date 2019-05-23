@@ -3,7 +3,7 @@ doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xht
 include tools.pug
 
 html(lang=lang)
-  +create-head
+  +create-head("Receive")
 
   body.index-bg(scroll="no")
 
@@ -30,14 +30,13 @@ html(lang=lang)
           snippet-list(class="table-scroll")
             form(class="table-wrap")
               for snippetcontent, index in snippetcontents
-                row 
-                  a(id="select-"+index)
-                    snippet(href="index" id=snippetcontent.id)
-                      info
-                        description #{snippetcontent.description}
-                        br
-                        from jadams
-                      img(src=snippetcontent.content)
+                row(id="select-"+index)
+                  snippet(href="index" id=snippetcontent.id)
+                    info
+                      description #{snippetcontent.description}
+                      br
+                      from jadams
+                    img(src=snippetcontent.content)
           snippet-selected
             info
               description(id="selected-description")

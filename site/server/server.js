@@ -9,10 +9,10 @@ const jwt = require('jsonwebtoken')
 const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
-const multer = require('multer');
+const multer = require('multer')
 const upload = multer({
   dest: __dirname + '/images'
-});
+})
 const rp = require('request-promise')
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
@@ -49,18 +49,15 @@ async function connectToServer() {
 /// ///////////////////////////////////////////////
 
 router.get('/logout', async function (req, res) {
-
   res.cookie('currentUser', '')
   res.render('login')
-
 })
 
 router.post('/receive/deleteSnippet/', async function (req, res) {
-  console.log("This is the id:", req.body.snippetid)
+  console.log('This is the id:', req.body.snippetid)
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
-
 })
 
 router.get('/logout', (req, res) => {
@@ -75,12 +72,12 @@ router.get('/snippetcontent/:id', async function (req, res) {
   })
 })
 
-router.post('/forward-snippet/', (async function (req, res) {
+router.post('/forward-snippet/', async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.snippetid)
   await database.forwardSnippet(req.body.snippetid, req, res).then(res => {
     return res
   })
-}))
+})
 
 router.post('/create-snippet/', async function (req, res) {
   console.log('server: Creating snippet with content:', req.body.content, 'description:', req.body.description, 'redirectid:', req.body.redirectid)
@@ -96,7 +93,7 @@ router.get('/index', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != "Unsuccessful") {
+  if (alias != 'Unsuccessful') {
     let username = await database.getUserByAlias(alias).then(res => {
       return res
     })
@@ -114,16 +111,12 @@ router.get('/send', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != "Unsuccessful") {
+  if (alias != 'Unsuccessful') {
     let username = await database.getUserByAlias(alias, false)
     res.render('send', {
       from: username
     })
   }
-})
-
-router.get('/stats', function (req, res) {
-  res.render('stats')
 })
 
 // The next 2 requests include the authentication
@@ -157,7 +150,7 @@ router.get('/receive', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != "Unsuccessful") {
+  if (alias != 'Unsuccessful') {
     await renderReceive(req, res)
   }
 })
@@ -166,11 +159,37 @@ router.get('/stats', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != "Unsuccessful") {
-    res.render('stats')
+  if (alias != 'Unsuccessful') {
+    console.log("Gets Here")
+    var clientVariables = {}
+    clientVariables.snippetcontents = []
+    // Need to load snippet data from the database to display on the page.
+    // For each snippet, retrieve the snippet content ID.
+    // snippets.forEach(async function (entry, index) {
+    await database.getTop10Snippets().then(async function (snippets) {
+      // snippets = snippets[0]
+      // console.log(snippets)
+      for (var snip in snippets) {
+        // console.log(snippets[snip])
+        // Retrieve the snippet content.
+        console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
+        let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
+          return res[0].username
+        })
+        clientVariables.snippetcontents.push({
+          'description': snippets[snip].description,
+          'content': snippets[snip].content,
+          'id': snippets[snip].id,
+          'forwardcount': snippets[snip].forwardcount,
+          'username': username
+        })
+      }
+      setTimeout(function () {
+        res.render('stats', clientVariables)
+      }, 100)
+    })
   }
 })
-
 
 router.post('/send', upload.single('fileupload'), async function (req, res) {
   const directoryPath = path.join(__dirname, 'images')
@@ -222,9 +241,9 @@ router.post('/receive', async function (req, res) {
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
-  if (req.body.button == "trash-it") {
+  if (req.body.button == 'trash-it') {
 
-  } else if (req.body.button == "forward-it") {
+  } else if (req.body.button == 'forward-it') {
     await database.forwardSnippet(req.body.snippetid, req, res).then(res => {
       return res
     })
@@ -263,13 +282,13 @@ async function uploadImage(img, fileName) {
       type: 'base64',
       name: fileName,
       title: fileName,
-      description: fileName,
+      description: fileName
 
     }),
     method: 'POST',
     headers: {
       'Authorization': 'Client-ID 14127dd4a0535dc',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     }
   }
   let result = await rp(requestInfo).then(response => {

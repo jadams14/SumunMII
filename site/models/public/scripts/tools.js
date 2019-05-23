@@ -10,10 +10,10 @@ module.exports = {
   retrieveSnippetContent: retrieveSnippetContent,
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
-  deleteSnippet: deleteSnippet,
+  deleteSnippet: deleteSnippet
 }
 
-function retrieveSnippetContent(id, _callback) {
+function retrieveSnippetContent (id, _callback) {
   request('http://localhost:7000/snippetcontent/' + id, {
     json: true
   }, (err, res, body) => {
@@ -25,11 +25,11 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function getDataUri(img, callback) {
+async function getDataUri (img, callback) {
   // var image = new canvas;
 
   // image.onload = function () {
-  var canvas = document.createElement('canvas');
+  var canvas = document.createElement('canvas')
   var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
   // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
   // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
@@ -37,7 +37,7 @@ async function getDataUri(img, callback) {
   // canvas.getContext('2d').drawImage(this, 0, 0);
 
   // Get raw image data
-  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''))
   // callback(dataURL)
   // ... or get as Data URI
   // callback(canvas.toDataURL('image/png'));
@@ -46,7 +46,7 @@ async function getDataUri(img, callback) {
   // image.src = url;
 }
 
-async function deleteSnippet(snippetid) {
+async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -70,7 +70,7 @@ async function deleteSnippet(snippetid) {
   })
 }
 
-async function forwardSnippet(snippetid) {
+async function forwardSnippet (snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -95,7 +95,7 @@ async function forwardSnippet(snippetid) {
   })
 }
 
-async function createSnippet(content, description, redirectid, _callback) {
+async function createSnippet (content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {

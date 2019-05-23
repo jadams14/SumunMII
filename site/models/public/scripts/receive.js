@@ -8,7 +8,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive(counter) {
+function setActive (counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -23,7 +23,7 @@ function setActive(counter) {
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
 
-    //Update trash it and forward it buttons.
+    // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
       await tools.forwardSnippet(counter).then(response => {
@@ -58,13 +58,13 @@ function setActive(counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons() {
+function assignButtons () {
   var viable = true
   var counter = 0
   while (viable) {
     var rowID = 'select-' + counter
     var rowItem = $(rowID)
-    console.log("Gets Here")
+    console.log('Gets Here')
     if (rowItem != null) {
       // $('selected-description').animate = 'm-page scene_element scene_element--fadeinup'
       // Complexity here required to prevent rowItem from always being the final value of the loop.

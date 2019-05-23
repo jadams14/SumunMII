@@ -18,11 +18,11 @@ var infoTextList = ['Welcome to Simun!',
 
 var infoTextCounter = 0
 
-function updateText() {
+function updateText () {
   $('info-text').innerHTML = infoTextList[infoTextCounter]
 }
 
-function nextText() {
+function nextText () {
   // Update the text and make left arrow visible as long as as there is a next message.
   if (infoTextCounter < infoTextList.length - 1) {
     infoTextCounter += 1
@@ -36,7 +36,7 @@ function nextText() {
   }
 }
 
-function prevText() {
+function prevText () {
   // Update the text and make right arrow visible as long as as there is a previous message.
   if (infoTextCounter > 0) {
     infoTextCounter -= 1

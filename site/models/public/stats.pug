@@ -3,7 +3,7 @@ doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xht
 include tools.pug
 
 html(lang=lang)
-  +create-head
+  +create-head("Stats")
 
   body.index-bg(scroll="no")
 
@@ -22,5 +22,21 @@ html(lang=lang)
           a.color-light(href="stats") Stats
         li
           a(href="logout") Log Out
+
+    stats
+      holder
+        snippet-list
+          for snippetcontent, index in snippetcontents
+            row(id="select-"+index)
+              snippet(href="index" id=snippetcontent.id)
+                column
+                  description #{snippetcontent.description}
+                column
+                  from #{snippetcontent.username}
+                column
+                  count #{snippetcontent.forwardcount}
+        h1 Hello
+  
   
   +create-footer
+  script(type="text/javascript" src="../scripts/stats.js")
