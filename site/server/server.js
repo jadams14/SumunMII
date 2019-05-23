@@ -155,12 +155,16 @@ router.get('/receive', async function (req, res) {
   }
 })
 
+router.get('/stats/snippet/:index', async function (req, res) {
+  console.log(req.params.index)
+  res.render('stats')
+})
+
 router.get('/stats', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
   if (alias != 'Unsuccessful') {
-    console.log("Gets Here")
     var clientVariables = {}
     clientVariables.snippetcontents = []
     // Need to load snippet data from the database to display on the page.
@@ -190,6 +194,7 @@ router.get('/stats', async function (req, res) {
     })
   }
 })
+
 
 router.post('/send', upload.single('fileupload'), async function (req, res) {
   const directoryPath = path.join(__dirname, 'images')
@@ -249,6 +254,8 @@ router.post('/receive', async function (req, res) {
     })
   }
 })
+
+
 
 router.post('/register', async function (req, res) {
   var username = req.body.username

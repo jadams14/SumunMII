@@ -9,7 +9,7 @@ html(lang=lang)
 
     // Big bar on top with navigation utilities.
     header
-      a(href="/index")
+      a(href="index")
         logo
       ul
         li
@@ -27,8 +27,8 @@ html(lang=lang)
       holder
         snippet-list
           for snippetcontent, index in snippetcontents
-            row(id="select-"+index)
-              snippet(href="index" id=snippetcontent.id)
+            row(id="select-"+index name="row")
+              snippet( id=snippetcontent.id)
                 column
                   description #{snippetcontent.description}
                 column
