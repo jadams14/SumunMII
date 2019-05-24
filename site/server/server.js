@@ -62,6 +62,7 @@ router.post('/receive/deleteSnippet/', async function (req, res) {
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
+  res.render('receive')
 })
 
 router.get('/logout', (req, res) => {
@@ -78,9 +79,10 @@ router.get('/snippetcontent/:id', async function (req, res) {
 
 router.post('/forward-snippet/', async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.snippetid)
-  await database.forwardSnippet(req.body.snippetid, req, res).then(res => {
-    return res
+  await database.forwardSnippet(req.body.snippetid, req, res).then(result => {
+    return result
   })
+  res.render('receive')
 })
 
 router.post('/create-snippet/', async function (req, res) {
