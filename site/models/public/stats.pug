@@ -29,7 +29,7 @@ html(lang=lang)
           form(class="table-wrap")
             for snippetcontent, index in snippetcontents
               row(id="select-"+index name="row")
-                snippet( id=snippetcontent.id)
+                snippet( id=snippetcontent.id class="background1")
                   column
                     description #{snippetcontent.description}
                   column

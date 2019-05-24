@@ -25,9 +25,9 @@ function setActive (counter) {
 
   // Unhighlight the current selector and highlight the selected
   var prevRowItem = $('select-' + currentlyActive)
-  prevRowItem.children[0].style.backgroundColor = tools.colorprimary
+  prevRowItem.children[0].setAttribute("class", "background1")
   currentlyActive = counter
-  rowItem.children[0].style.backgroundColor = tools.colorlight
+  rowItem.children[0].setAttribute("class", "background2")
 }
 
 function addOnClick() {

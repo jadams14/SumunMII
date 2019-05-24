@@ -61,8 +61,8 @@ $color-shadow: #00000080;
   font-weight: bold;
 }
 
-    @font-face {
-      font-family: 'OpenSansItalic';
+@font-face {
+  font-family: 'OpenSansItalic';
   src: url("fonts/open-sans/OpenSans-Italic.ttf") format("truetype");
   font-weight: italic;
 }
@@ -150,6 +150,13 @@ img {
   animation-name: fadeInRight;
 }
 
+.background1 {
+  background-color: $color-primary;
+}
+
+.background2 {
+  background-color: $color-light;
+}
 
 /* Animations --------------------------------------------------------------- */
 
@@ -907,12 +914,13 @@ stats {
       margin-bottom: 1px;
     }
 
+
     snippet {
       display: table-cell;
-      background-color: $color-primary;
       padding: 10px;
       border-radius: 6px;
       width: 30%;
+
 
       column {
         float: left;

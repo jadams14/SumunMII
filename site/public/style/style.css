@@ -132,6 +132,14 @@ img {
   animation-name: fadeInRight;
 }
 
+.background1 {
+  background-color: #586f7c;
+}
+
+.background2 {
+  background-color: #b8dbd9;
+}
+
 /* Animations --------------------------------------------------------------- */
 @keyframes shake {
   0% {
@@ -713,7 +721,6 @@ stats snippet-list row {
 }
 stats snippet-list snippet {
   display: table-cell;
-  background-color: #586f7c;
   padding: 10px;
   border-radius: 6px;
   width: 30%;

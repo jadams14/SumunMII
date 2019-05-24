@@ -13,6 +13,7 @@ const multer = require('multer')
 const upload = multer({
   dest: __dirname + '/images'
 })
+var https = require('https')
 const rp = require('request-promise')
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
@@ -39,7 +40,10 @@ app.use('/', router)
 // Used to check current user against the cookie token
 
 async function connectToServer() {
-  app.listen(7000, 'localhost', () => {
+  https.createServer({
+    key: fs.readFileSync(__dirname + '/credentials/server.key'),
+    cert: fs.readFileSync(__dirname + '/credentials/server.cert')
+  }, app).listen(7000, 'localhost', () => {
     console.log('server: Express running → localhost:7000')
   })
 }
