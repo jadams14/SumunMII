@@ -61,8 +61,8 @@ $color-shadow: #00000080;
   font-weight: bold;
 }
 
-@font-face {
-  font-family: 'OpenSansItalic';
+    @font-face {
+      font-family: 'OpenSansItalic';
   src: url("fonts/open-sans/OpenSans-Italic.ttf") format("truetype");
   font-weight: italic;
 }
@@ -428,7 +428,6 @@ receive {
     border-spacing: 1.5px 1.5px;
 
     table-scroll {
-      position: relative;
       max-width: 1280px;
       width: 100%;
       margin: auto;
@@ -440,7 +439,7 @@ receive {
       display: block;
       height: 300px;
       overflow: auto;
-      position: relative;
+      position: absolute;
       z-index: 1;
     }
 
@@ -453,7 +452,7 @@ receive {
 
     snippet {
       display: table-cell;
-      width: 26%;
+      width: 30%;
       background-color: $color-primary;
       padding: 10px;
       border-radius: 6px;
@@ -784,100 +783,108 @@ send {
   }
 }
 
+// stats {
+//   width: 30%;
+//   padding-left: 15%;
+
+//   snippet-list {
+//     display: table;
+//     width: 30%;
+//     padding-left: 15%;
+//     background-color: $color-dark;
+//     border-collapse: separate;
+//     border-spacing: 1.5px 1.5px;
+//     padding-top: 100px;
+
+//     row {
+//       width: 50%;
+//       cursor: pointer;
+//       display: table-row;
+//       column-span: 2;
+//       margin-bottom: 1px;
+//     }
+
+//     snippet {
+//       display: table-cell;
+//       background-color: $color-primary;
+//       padding: 10px;
+//       border-radius: 6px;
+//       width: 30%;
+
+//       column {
+//         float: left;
+//         width: 33.33%;
+//       }
+
+//       description {
+//         position: relative;
+//         font-size: auto;
+//       }
+
+//       from {
+//         font-size: auto;
+//         font-family: GlacialIndifferenceItalic;
+//       }
+
+//       img {
+//         display: block;
+//         position: absolute;
+//         top: 46%;
+//         left: 50%;
+//         transform: translate(-50%, -50%);
+//         height: 60%;
+//         width: auto;
+//         max-width: 95%;
+//       }
+
+
+//     }
+
+//     h1 {
+//       color: $color-light;
+//       font-size: 100px;
+//     }
+
+//     snippet-selected {
+//       float: right;
+
+//       img {
+//         display: block;
+//         position: absolute;
+//         top: 46%;
+//         left: 50%;
+//         transform: translate(-50%, -50%);
+//         height: 60%;
+//         width: auto;
+//         max-width: 95%;
+//       }
+
+
+//     }
+
+//     snippet:hover {
+//       background-color: $color-light;
+//     }
+//   }
+
+
+// }
+
 stats {
-  form {
-    padding-top: 100px;
-    display: table-cell;
-    vertical-align: center;
-
-    canvas {
-      // margin-top: 10px;
-      height: 400px;
-      width: 400px;
-    }
-
-    h1 {
-      color: $color-light;
-      font-size: 100px;
-      margin-bottom: 10px;
-    }
-  }
-
-  // snippet-list {
-  //   width: 300px;
-  //   display: table-cell;
-  //   border-collapse: separate;
-  //   border-spacing: 1.5px 1.5px;
-  //   border-color: $color-black;
-
-  //   table-scroll {
-  //     width: 100%;
-  //     margin: auto;
-  //     display: fixed;
-  //   }
-
-  //   table-wrap {
-  //     margin: auto;
-  //     width: 100%;
-  //     overflow: auto;
-  //   }
-
-  //   row {
-  //     margin: auto;
-  //     width: 100%;
-  //     cursor: pointer;
-  //     display: table-row;
-  //     margin-bottom: 10x;
-  //   }
-
-  //   snippet {
-  //     display: block;
-  //     width: 100%;
-  //     background-color: $color-primary;
-  //     padding: 10px;
-  //     border-radius: 6px;
-
-  //     info {
-  //       width: 100%;
-
-  //       description {
-  //         text-align: right;
-  //         font-size: auto;
-  //       }
-
-  //       from {
-  //         text-align: left;
-  //         font-size: auto;
-  //         font-family: GlacialIndifferenceItalic;
-  //       }
-  //     }
-
-  //     img {
-  //       width: 40%;
-  //       height: auto;
-  //       max-height: 200px;
-  //       float: right;
-  //       display: block;
-  //     }
-
-  //   }
-
-  //   snippet:nth-child(even) {
-  //     background-color: $color-dark;
-  //   }
-
-  // }
+  background-color: $color-dark;
 
   snippet-list {
+    padding-top: 12%;
     display: table;
-    width: 20%;
+    width: 30%;
+    padding-left: 20%;
     background-color: $color-dark;
     border-collapse: separate;
     border-spacing: 1.5px 1.5px;
-    margin: auto;
-    padding-top: 100px;
 
     table-scroll {
+      position: relative;
+      max-width: 1280px;
       width: 100%;
       margin: auto;
       display: block;
@@ -885,26 +892,27 @@ stats {
 
     table-wrap {
       width: 100%;
-      margin: auto;
       display: block;
-      float: middle;
+      overflow: auto;
       position: relative;
       z-index: 1;
     }
 
     row {
+      width: 50%;
+      height: 10%;
       cursor: pointer;
       display: table-row;
-      column-span: 2;
+      column-span: 3;
       margin-bottom: 1px;
     }
 
     snippet {
       display: table-cell;
-      width: 100%;
       background-color: $color-primary;
       padding: 10px;
       border-radius: 6px;
+      width: 30%;
 
       column {
         float: left;
@@ -921,13 +929,14 @@ stats {
         font-family: GlacialIndifferenceItalic;
       }
 
+
       img {
         width: 40%;
         height: auto;
         max-height: 200px;
+        float: right;
         display: block;
       }
-
     }
 
     snippet:hover {
@@ -935,4 +944,35 @@ stats {
     }
   }
 
+  snippet-selected {
+    display: block;
+    position: fixed;
+    top: 9%;
+    left: 50%;
+    width: 30%;
+    bottom: 40%;
+    height: 60%;
+    margin: 80px 3px 3px 3px;
+    background-color: $color-light;
+    border-radius: 6px;
+    padding: 10px;
+
+
+    h1 {
+      color: $color-light;
+      font-size: 100px;
+      text-align: center;
+    }
+
+    img {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      max-width: 95%;
+      color: $color-dark;
+    }
+  }
 }

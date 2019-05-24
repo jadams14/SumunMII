@@ -155,10 +155,41 @@ router.get('/receive', async function (req, res) {
   }
 })
 
-router.get('/stats/snippet/:index', async function (req, res) {
-  console.log(req.params.index)
-  res.render('stats')
+router.get('/stats/snippets/:index', async function (req, res) {
+  let alias = await database.getCurrentUser(req, res).then(res => {
+    return res
+  })
+  if (alias != 'Unsuccessful') {
+    var clientVariables = {}
+    clientVariables.snippetcontents = []
+    // Need to load snippet data from the database to display on the page.
+    // For each snippet, retrieve the snippet content ID.
+    // snippets.forEach(async function (entry, index) {
+    await database.getTop10Snippets().then(async function (snippets) {
+      // snippets = snippets[0]
+      // console.log(snippets)
+      for (var snip in snippets) {
+        // console.log(snippets[snip])
+        // Retrieve the snippet content.
+        console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
+        let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
+          return res[0].username
+        })
+        clientVariables.snippetcontents.push({
+          'description': snippets[snip].description,
+          'content': snippets[snip].content,
+          'id': snippets[snip].id,
+          'forwardcount': snippets[snip].forwardcount,
+          'username': username
+        })
+      }
+      setTimeout(function () {
+        res.render('stats', clientVariables)
+      }, 100)
+    })
+  }
 })
+
 
 router.get('/stats', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {

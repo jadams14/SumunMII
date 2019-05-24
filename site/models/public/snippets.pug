@@ -1,0 +1,34 @@
+doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+
+include tools.pug
+
+html(lang=lang)
+  +create-head("Snippets")
+
+  body.index-bg(scroll="no")
+
+    // Big bar on top with navigation utilities.
+    header
+      a(href="index")
+        logo
+      ul
+        li
+          a(href="login") Login
+        li
+          a(href="receive") Receive
+        li
+          a(href="send") Send
+        li.nav-item
+          a.color-light(href="stats") Stats
+        li
+          a(href="logout") Log Out
+
+    snippets
+      info
+        description=description
+        from=username
+        img(src=img) 
+  
+  
+  +create-footer
+  script(type="text/javascript" src="../scripts/stats.js")
