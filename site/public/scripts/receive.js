@@ -9,7 +9,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive(counter) {
+function setActive (counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -24,10 +24,10 @@ function setActive(counter) {
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
 
-    //Update trash it and forward it buttons.
+    // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      tools.forwardSnippet(counter).then(response => {
+      await tools.forwardSnippet(counter).then(response => {
         console.log(result)
         // if (err) {
         //   console.log('Error forwarding snippet', err)
@@ -39,7 +39,7 @@ function setActive(counter) {
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      tools.deleteSnippet(counter).then(response => {
+      await tools.deleteSnippet(counter).then(response => {
         console.log(result)
         // if (err) {
         //   console.log('Error deleting snippet', err)
@@ -59,13 +59,13 @@ function setActive(counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons() {
+function assignButtons () {
   var viable = true
   var counter = 0
   while (viable) {
     var rowID = 'select-' + counter
     var rowItem = $(rowID)
-    console.log("Gets Here")
+    console.log('Gets Here')
     if (rowItem != null) {
       // $('selected-description').animate = 'm-page scene_element scene_element--fadeinup'
       // Complexity here required to prevent rowItem from always being the final value of the loop.
@@ -85,6 +85,7 @@ function assignButtons() {
 assignButtons()
 
 setActive(0)
+
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')
@@ -98,10 +99,10 @@ module.exports = {
   retrieveSnippetContent: retrieveSnippetContent,
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
-  deleteSnippet: deleteSnippet,
+  deleteSnippet: deleteSnippet
 }
 
-function retrieveSnippetContent(id, _callback) {
+function retrieveSnippetContent (id, _callback) {
   request('http://localhost:7000/snippetcontent/' + id, {
     json: true
   }, (err, res, body) => {
@@ -113,11 +114,11 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function getDataUri(img, callback) {
+async function getDataUri (img, callback) {
   // var image = new canvas;
 
   // image.onload = function () {
-  var canvas = document.createElement('canvas');
+  var canvas = document.createElement('canvas')
   var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
   // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
   // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
@@ -125,7 +126,7 @@ async function getDataUri(img, callback) {
   // canvas.getContext('2d').drawImage(this, 0, 0);
 
   // Get raw image data
-  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''))
   // callback(dataURL)
   // ... or get as Data URI
   // callback(canvas.toDataURL('image/png'));
@@ -134,7 +135,7 @@ async function getDataUri(img, callback) {
   // image.src = url;
 }
 
-async function deleteSnippet(snippetid) {
+async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -158,7 +159,7 @@ async function deleteSnippet(snippetid) {
   })
 }
 
-async function forwardSnippet(snippetid) {
+async function forwardSnippet (snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -183,7 +184,7 @@ async function forwardSnippet(snippetid) {
   })
 }
 
-async function createSnippet(content, description, redirectid, _callback) {
+async function createSnippet (content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {
@@ -208,6 +209,7 @@ async function createSnippet(content, description, redirectid, _callback) {
     return res.body
   })
 }
+
 },{"request":132,"request-promise":131}],3:[function(require,module,exports){
 'use strict';
 

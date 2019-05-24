@@ -3,13 +3,13 @@ doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xht
 include tools.pug
 
 html(lang=lang)
-  +create-head("Index")
+  +create-head("Snippets")
 
   body.index-bg(scroll="no")
 
     // Big bar on top with navigation utilities.
     header
-      a(href="/index")
+      a(href="index")
         logo
       ul
         li
@@ -18,23 +18,17 @@ html(lang=lang)
           a(href="receive") Receive
         li
           a(href="send") Send
-        li
-          a(href="stats") Stats
+        li.nav-item
+          a.color-light(href="stats") Stats
         li
           a(href="logout") Log Out
 
-    index
-      form(class="m-page scene_element scene_element--fadein")
-        form()
-          h2=user
-          house 
-          postbox
-          mail
-          text-box
-            h1(id="info-text") Welcome to Simun!
-            arrow-left(id="arrow-left")
-            arrow-right(id="arrow-right")
+    snippets
+      info
+        description=description
+        from=username
+        img(src=img) 
+  
   
   +create-footer
-
-  script(type="text/javascript" src="scripts/index.js")
+  script(type="text/javascript" src="../scripts/stats.js")

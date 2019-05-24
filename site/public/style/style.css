@@ -366,7 +366,6 @@ receive snippet-list {
   border-spacing: 1.5px 1.5px;
 }
 receive snippet-list table-scroll {
-  position: relative;
   max-width: 1280px;
   width: 100%;
   margin: auto;
@@ -377,18 +376,18 @@ receive snippet-list table-wrap {
   display: block;
   height: 300px;
   overflow: auto;
-  position: relative;
+  position: absolute;
   z-index: 1;
 }
 receive snippet-list row {
   cursor: pointer;
   display: table-row;
   column-span: 2;
-  margin-bottom: 10x;
+  margin-bottom: 10px;
 }
 receive snippet-list snippet {
   display: table-cell;
-  width: 26%;
+  width: 30%;
   background-color: #586f7c;
   padding: 10px;
   border-radius: 6px;
@@ -414,6 +413,9 @@ receive snippet-list snippet img {
   max-height: 200px;
   float: right;
   display: block;
+}
+receive snippet-list snippet:hover {
+  background-color: #b8dbd9;
 }
 receive h1 {
   color: #b8dbd9;
@@ -673,6 +675,98 @@ send form button {
 }
 send form button:hover {
   border: 4px solid #b8dbd9;
+}
+
+stats {
+  background-color: #2f4550;
+}
+stats snippet-list {
+  padding-top: 12%;
+  display: table;
+  width: 30%;
+  padding-left: 20%;
+  background-color: #2f4550;
+  border-collapse: separate;
+  border-spacing: 1.5px 1.5px;
+}
+stats snippet-list table-scroll {
+  position: relative;
+  max-width: 1280px;
+  width: 100%;
+  margin: auto;
+  display: block;
+}
+stats snippet-list table-wrap {
+  width: 100%;
+  display: block;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
+stats snippet-list row {
+  width: 50%;
+  height: 10%;
+  cursor: pointer;
+  display: table-row;
+  column-span: 3;
+  margin-bottom: 1px;
+}
+stats snippet-list snippet {
+  display: table-cell;
+  background-color: #586f7c;
+  padding: 10px;
+  border-radius: 6px;
+  width: 30%;
+}
+stats snippet-list snippet column {
+  float: left;
+  width: 33.33%;
+}
+stats snippet-list snippet description {
+  position: relative;
+  font-size: auto;
+}
+stats snippet-list snippet from {
+  font-size: auto;
+  font-family: GlacialIndifferenceItalic;
+}
+stats snippet-list snippet img {
+  width: 40%;
+  height: auto;
+  max-height: 200px;
+  float: right;
+  display: block;
+}
+stats snippet-list snippet:hover {
+  background-color: #b8dbd9;
+}
+stats snippet-selected {
+  display: block;
+  position: fixed;
+  top: 9%;
+  left: 50%;
+  width: 30%;
+  bottom: 40%;
+  height: 60%;
+  margin: 80px 3px 3px 3px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+  padding: 10px;
+}
+stats snippet-selected h1 {
+  color: #b8dbd9;
+  font-size: 100px;
+  text-align: center;
+}
+stats snippet-selected img {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 95%;
+  color: #2f4550;
 }
 
 /*# sourceMappingURL=style.css.map */
