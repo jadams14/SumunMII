@@ -1,7 +1,7 @@
 var path = require('path')
 const express = require('express')
 var bodyParser = require('body-parser')
-var database = require('./database.js')
+var database = require('./database/database.js')
 const app = express()
 var router = express.Router()
 const request = require('request')
@@ -13,6 +13,7 @@ const multer = require('multer')
 const upload = multer({
   dest: __dirname + '/images'
 })
+var https = require('https')
 const rp = require('request-promise')
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 module.exports = {
@@ -39,7 +40,10 @@ app.use('/', router)
 // Used to check current user against the cookie token
 
 async function connectToServer() {
-  app.listen(7000, 'localhost', () => {
+  https.createServer({
+    key: fs.readFileSync(__dirname + '/credentials/server.key'),
+    cert: fs.readFileSync(__dirname + '/credentials/server.cert')
+  }, app).listen(7000, 'localhost', () => {
     console.log('server: Express running → localhost:7000')
   })
 }
@@ -48,16 +52,13 @@ async function connectToServer() {
 // Non page requests.
 /// ///////////////////////////////////////////////
 
-router.get('/logout', async function (req, res) {
-  res.cookie('currentUser', '')
-  res.render('login')
-})
-
 router.post('/receive/deleteSnippet/', async function (req, res) {
   console.log('This is the id:', req.body.snippetid)
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
+  console.log("Gets HERE!!!")
+  res.render('receive')
 })
 
 router.get('/logout', (req, res) => {
@@ -74,9 +75,11 @@ router.get('/snippetcontent/:id', async function (req, res) {
 
 router.post('/forward-snippet/', async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.snippetid)
-  await database.forwardSnippet(req.body.snippetid, req, res).then(res => {
-    return res
+  await database.forwardSnippet(req.body.snippetid, req, res).then(result => {
+    return result
   })
+  console.log("Gets HERE!!!!!")
+  res.render('receive')
 })
 
 router.post('/create-snippet/', async function (req, res) {
@@ -243,7 +246,7 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
           let resultData = await uploadImage(base64, req.body.title).then(response => {
             return JSON.parse(response)
           })
-          await database.sendImageToRandomUsers(resultData.data, res, req, false).then(response => {})
+          await database.sendSnippetToRandomUsers(resultData.data, res, req, false).then(response => {})
         }
       })
       // tools.sendImage(file.toString('base64'))
@@ -292,6 +295,7 @@ router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
   var confirmPassword = req.body.confirmPassword
+  var regex = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')
   if (req.body.button === 'register') {
     if (username === '' || password === '' || confirmPassword === '') {
       res.render('register', {
@@ -299,10 +303,19 @@ router.post('/register', async function (req, res) {
       })
     } else if (password === confirmPassword &&
       (await database.getUserByUsername(username) === false)) {
-      await database.createUser(username, password)
-      res.render('login', {
-        lMessage: 'Please Login Using Your New Credentials!'
-      })
+      console.log(password)
+      if (regex.test(password)) {
+        await database.createUser(username, password)
+        console.log("Gets Here!!")
+        res.render('login', {
+          lMessage: 'Please Login Using Your New Credentials!'
+        })
+      } else {
+        console.log("Gets Here!")
+        res.render('register', {
+          rMessage: 'Passwords must be between 8 and 16 characters, require atleast 1 special character, number, uppercase and a lower case letter!'
+        })
+      }
     }
   } else if (req.body.button == 'cancel') {
     res.redirect('/login')

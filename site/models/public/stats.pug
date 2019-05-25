@@ -13,8 +13,6 @@ html(lang=lang)
         logo
       ul
         li
-          a(href="login") Login
-        li
           a(href="receive") Receive
         li
           a(href="send") Send
@@ -25,19 +23,20 @@ html(lang=lang)
 
     stats
       holder
-        snippet-list(class="table-scroll m-page scene_element scene_element--fadein"  method="post" action="/receive")
-          form(class="table-wrap")
-            for snippetcontent, index in snippetcontents
-              row(id="select-"+index name="row")
-                snippet( id=snippetcontent.id)
-                  column
-                    description #{snippetcontent.description}
-                  column
-                    from #{snippetcontent.username}
-                  column
-                    count #{snippetcontent.forwardcount}
-        snippet-selected
-          img(id="selected-content")
+        wrapper
+          snippet-list(class="table-scroll m-page scene_element scene_element--fadein"  method="post" action="/receive")
+            form(class="table-wrap" id="table")
+              for snippetcontent, index in snippetcontents
+                row(id="select-"+index name="row")
+                  snippet( id=snippetcontent.id class="background1")
+                    column
+                      description #{snippetcontent.description}
+                    column
+                      from #{snippetcontent.username}
+                    column
+                      count #{snippetcontent.forwardcount}
+          snippet-selected(id='snippet-selected')
+            img(id="selected-content")
   
   
   +create-footer
