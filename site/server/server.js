@@ -298,6 +298,7 @@ router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
   var confirmPassword = req.body.confirmPassword
+  var regex = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$')
   if (req.body.button === 'register') {
     if (username === '' || password === '' || confirmPassword === '') {
       res.render('register', {
@@ -305,10 +306,19 @@ router.post('/register', async function (req, res) {
       })
     } else if (password === confirmPassword &&
       (await database.getUserByUsername(username) === false)) {
-      await database.createUser(username, password)
-      res.render('login', {
-        lMessage: 'Please Login Using Your New Credentials!'
-      })
+      console.log(password)
+      if (regex.test(password)) {
+        await database.createUser(username, password)
+        console.log("Gets Here!!")
+        res.render('login', {
+          lMessage: 'Please Login Using Your New Credentials!'
+        })
+      } else {
+        console.log("Gets Here!")
+        res.render('register', {
+          rMessage: 'Passwords must be between 8 and 16 characters, require atleast 1 special character, number, uppercase and a lower case letter!'
+        })
+      }
     }
   } else if (req.body.button == 'cancel') {
     res.redirect('/login')

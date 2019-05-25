@@ -61,8 +61,6 @@ async function deleteSnippet (snippetid) {
   }
 
   return await rp(requestInfo).then(function (err, res) {
-    console.log(err)
-    console.log(res)
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -88,7 +86,7 @@ async function forwardSnippet (snippetid) {
   }
   return await rp(requestInfo).then(function (err, res) {
     if (err) {
-      console.log('tools: error forwarding snippet', err)
+      console.log('tools: error forwarding snippet')
       return false
     }
     console.log('tools: error to client: ', err)
