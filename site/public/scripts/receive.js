@@ -9,7 +9,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive (counter) {
+function setActive(counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -28,7 +28,6 @@ function setActive (counter) {
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
       await tools.forwardSnippet(counter).then(response => {
-        console.log(result)
         // if (err) {
         //   console.log('Error forwarding snippet', err)
         //   return
@@ -40,7 +39,12 @@ function setActive (counter) {
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
       await tools.deleteSnippet(counter).then(response => {
-        console.log(result)
+
+
+
+
+
+
         // if (err) {
         //   console.log('Error deleting snippet', err)
         //   return
@@ -59,7 +63,7 @@ function setActive (counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons () {
+function assignButtons() {
   var viable = true
   var counter = 0
   while (viable) {
@@ -85,7 +89,6 @@ function assignButtons () {
 assignButtons()
 
 setActive(0)
-
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')
@@ -112,27 +115,6 @@ function retrieveSnippetContent (id, _callback) {
     }
     return _callback(null, JSON.parse(JSON.stringify(body)))
   })
-}
-
-async function getDataUri (img, callback) {
-  // var image = new canvas;
-
-  // image.onload = function () {
-  var canvas = document.createElement('canvas')
-  var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
-  // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-  // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-  // canvas.getContext('2d').drawImage(this, 0, 0);
-
-  // Get raw image data
-  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''))
-  // callback(dataURL)
-  // ... or get as Data URI
-  // callback(canvas.toDataURL('image/png'));
-  // };
-
-  // image.src = url;
 }
 
 async function deleteSnippet (snippetid) {

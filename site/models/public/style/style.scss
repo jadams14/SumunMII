@@ -158,6 +158,8 @@ img {
   background-color: $color-light;
 }
 
+
+
 /* Animations --------------------------------------------------------------- */
 
 @keyframes shake {
@@ -579,17 +581,20 @@ receive {
       trash-it {
         content: url("/assets/images/bin.png");
         display: block;
+        float: left;
         position: absolute;
         height: 70%;
         width: auto;
         top: 50%;
         left: 10%;
         transform: translate(0%, -50%);
+        cursor: pointer;
       }
 
       forward-it {
         content: url("/assets/images/plane-mail.png");
         display: block;
+        float: left;
         height: 70%;
         width: auto;
         position: absolute;
@@ -653,8 +658,8 @@ login {
     border-radius: 6px;
   }
 
-  .button:hover {
-    background-color: $color-dark;
+  button:hover {
+    background-color: $color-primary;
   }
 }
 
@@ -790,108 +795,29 @@ send {
   }
 }
 
-// stats {
-//   width: 30%;
-//   padding-left: 15%;
-
-//   snippet-list {
-//     display: table;
-//     width: 30%;
-//     padding-left: 15%;
-//     background-color: $color-dark;
-//     border-collapse: separate;
-//     border-spacing: 1.5px 1.5px;
-//     padding-top: 100px;
-
-//     row {
-//       width: 50%;
-//       cursor: pointer;
-//       display: table-row;
-//       column-span: 2;
-//       margin-bottom: 1px;
-//     }
-
-//     snippet {
-//       display: table-cell;
-//       background-color: $color-primary;
-//       padding: 10px;
-//       border-radius: 6px;
-//       width: 30%;
-
-//       column {
-//         float: left;
-//         width: 33.33%;
-//       }
-
-//       description {
-//         position: relative;
-//         font-size: auto;
-//       }
-
-//       from {
-//         font-size: auto;
-//         font-family: GlacialIndifferenceItalic;
-//       }
-
-//       img {
-//         display: block;
-//         position: absolute;
-//         top: 46%;
-//         left: 50%;
-//         transform: translate(-50%, -50%);
-//         height: 60%;
-//         width: auto;
-//         max-width: 95%;
-//       }
-
-
-//     }
-
-//     h1 {
-//       color: $color-light;
-//       font-size: 100px;
-//     }
-
-//     snippet-selected {
-//       float: right;
-
-//       img {
-//         display: block;
-//         position: absolute;
-//         top: 46%;
-//         left: 50%;
-//         transform: translate(-50%, -50%);
-//         height: 60%;
-//         width: auto;
-//         max-width: 95%;
-//       }
-
-
-//     }
-
-//     snippet:hover {
-//       background-color: $color-light;
-//     }
-//   }
-
-
-// }
-
 stats {
   background-color: $color-dark;
 
+  wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
   snippet-list {
-    padding-top: 12%;
+    position: absolute;
     display: table;
     width: 30%;
+    max-width: 30%;
     padding-left: 20%;
     background-color: $color-dark;
     border-collapse: separate;
     border-spacing: 1.5px 1.5px;
 
+
     table-scroll {
-      position: relative;
-      max-width: 1280px;
       width: 100%;
       margin: auto;
       display: block;
@@ -899,15 +825,12 @@ stats {
 
     table-wrap {
       width: 100%;
-      display: block;
       overflow: auto;
-      position: relative;
       z-index: 1;
     }
 
     row {
       width: 50%;
-      height: 10%;
       cursor: pointer;
       display: table-row;
       column-span: 3;
@@ -917,10 +840,10 @@ stats {
 
     snippet {
       display: table-cell;
+      position: relative;
       padding: 10px;
       border-radius: 6px;
       width: 30%;
-
 
       column {
         float: left;
@@ -936,41 +859,25 @@ stats {
         font-size: auto;
         font-family: GlacialIndifferenceItalic;
       }
-
-
-      img {
-        width: 40%;
-        height: auto;
-        max-height: 200px;
-        float: right;
-        display: block;
-      }
     }
 
     snippet:hover {
       background-color: $color-light;
     }
+
+
   }
 
   snippet-selected {
     display: block;
-    position: fixed;
-    top: 9%;
+    position: absolute;
+    height: 50%;
     left: 50%;
     width: 30%;
-    bottom: 40%;
-    height: 60%;
-    margin: 80px 3px 3px 3px;
     background-color: $color-light;
     border-radius: 6px;
     padding: 10px;
-
-
-    h1 {
-      color: $color-light;
-      font-size: 100px;
-      text-align: center;
-    }
+    transition: all .5s linear;
 
     img {
       display: block;

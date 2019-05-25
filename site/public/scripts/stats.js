@@ -30,6 +30,12 @@ function setActive (counter) {
   rowItem.children[0].setAttribute("class", "background2")
 }
 
+function setHeight() {
+  let height = $('table').offsetHeight + 50
+  $('snippet-selected').setAttribute("style", "height:" + height + 'px')
+}
+
+
 function addOnClick() {
     var viable = true
     var counter = 0
@@ -58,10 +64,12 @@ function addOnClick() {
         }
     }
 }
+setHeight()
 
 addOnClick()
 
 setTimeout(setActive(0), 3000)
+
 
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')

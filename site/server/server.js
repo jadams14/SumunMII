@@ -52,16 +52,12 @@ async function connectToServer() {
 // Non page requests.
 /// ///////////////////////////////////////////////
 
-router.get('/logout', async function (req, res) {
-  res.cookie('currentUser', '')
-  res.render('login')
-})
-
 router.post('/receive/deleteSnippet/', async function (req, res) {
   console.log('This is the id:', req.body.snippetid)
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
+  console.log("Gets HERE!!!")
   res.render('receive')
 })
 
@@ -82,6 +78,7 @@ router.post('/forward-snippet/', async function (req, res) {
   await database.forwardSnippet(req.body.snippetid, req, res).then(result => {
     return result
   })
+  console.log("Gets HERE!!!!!")
   res.render('receive')
 })
 

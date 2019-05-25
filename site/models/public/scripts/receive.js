@@ -8,7 +8,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive (counter) {
+function setActive(counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -27,7 +27,6 @@ function setActive (counter) {
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
       await tools.forwardSnippet(counter).then(response => {
-        console.log(result)
         // if (err) {
         //   console.log('Error forwarding snippet', err)
         //   return
@@ -39,7 +38,12 @@ function setActive (counter) {
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
       await tools.deleteSnippet(counter).then(response => {
-        console.log(result)
+
+
+
+
+
+
         // if (err) {
         //   console.log('Error deleting snippet', err)
         //   return
@@ -58,7 +62,7 @@ function setActive (counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons () {
+function assignButtons() {
   var viable = true
   var counter = 0
   while (viable) {

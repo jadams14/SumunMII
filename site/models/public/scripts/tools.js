@@ -25,27 +25,6 @@ function retrieveSnippetContent (id, _callback) {
   })
 }
 
-async function getDataUri (img, callback) {
-  // var image = new canvas;
-
-  // image.onload = function () {
-  var canvas = document.createElement('canvas')
-  var dataURL = canvas.toDataURL(img, 1.0).replace(/^data:image\/(png|jpg);base64,/, '')
-  // canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-  // canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-  // canvas.getContext('2d').drawImage(this, 0, 0);
-
-  // Get raw image data
-  callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''))
-  // callback(dataURL)
-  // ... or get as Data URI
-  // callback(canvas.toDataURL('image/png'));
-  // };
-
-  // image.src = url;
-}
-
 async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
