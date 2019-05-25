@@ -1,13 +1,12 @@
 var path = require('path')
 const sqlite3 = require('sqlite3').verbose()
-const dbPath = path.resolve(__dirname, '../database/database.db')
-const testsDbPath = path.resolve(__dirname, '../database/tests-database.db')
+const dbPath = path.resolve(__dirname, '../../database/database.db')
+const testsDbPath = path.resolve(__dirname, '../../database/tests-database.db')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 var Cookies = require('cookies')
 const jwt = require('jsonwebtoken')
-const config = require('./config.js')
-var crypto = require('crypto')
+const config = require('../config.js')
 // The functions exported here should only allow the transferral of nonsensitive information; login
 // details should be strictly monitored, as well as access to redirects.
 module.exports = {
@@ -18,7 +17,6 @@ module.exports = {
   createUser: createUser,
   getUserData: getUserData,
   updateUserPassword: updateUserPassword,
-  removeUser: removeUser,
   getUserByUsername: getUserByUsername,
   getUserByAlias: getUserByAlias,
   getCurrentUser: getCurrentUser,
@@ -39,7 +37,7 @@ module.exports = {
   getSnippetContent: getSnippetContent,
   removeSnippetContent: removeSnippetContent,
   getTop10Snippets: getTop10Snippets,
-  sendImageToRandomUsers: sendImageToRandomUsers
+  sendSnippetToRandomUsers: sendSnippetToRandomUsers
 }
 
 let db = connectDatabase()
@@ -166,12 +164,6 @@ async function updateUserPassword(loginid, newPassword, testMode = false) {
   return await sqlPut(sqlCode, sqlData, testMode)
 }
 
-async function removeUser(loginid, testMode = false) {
-  var sqlData = [loginid]
-  var sqlCode = 'DELETE FROM login WHERE id = ?'
-  return await sqlPut(sqlCode, sqlData, testMode)
-}
-
 /// ///////////////////////////////////////////////
 // User Related Calls.
 /// ///////////////////////////////////////////////
@@ -194,9 +186,6 @@ async function getUserData(username, testMode = false) {
 }
 
 async function createUser(username, password, testMode = false) {
-  // This will eventually have the functionality to create all rows relevant to user
-  // In each table
-
   // This can change if there's another way of doing this that we have
   // Generate alias of 6 characters
   var alias = Math.random().toString(36).substring(2, 7)
@@ -265,18 +254,6 @@ async function removeRedirect(redirectid, testMode = false) {
 // Snippet Related Calls.
 /// ///////////////////////////////////////////////
 
-async function addSnippetToUser(redirectid, snippetid, testMode = false) {
-  var result = await getRedirect(snippetid, testMode).then(res => {
-    return res[0]
-  })
-  var currentSnippets = result.snippetids
-  currentSnippets = currentSnippets.substring(0, currentSnippets.length - 1)
-  currentSnippets = currentSnippets + ', "' + redirectid + '"]'
-  var sqlData = [redirectid, currentSnippets]
-  var sqlCode = 'UPDATE snippetids FROM snippet WHERE redirectid = ?'
-  return await sqlPut(sqlCode, sqlData, testMode)
-}
-
 async function updateRedirectSnippetList(redirectid, snippetids, testMode = false) {
   var sqlData = [snippetids, redirectid]
   var sqlCode = 'UPDATE redirect SET snippetids = ? WHERE id = ?'
@@ -300,10 +277,6 @@ async function deleteSnippet(index, req, res, testMode = false) {
   return await updateRedirectSnippetList(redirect.id, snippetList, testMode).then(res => {
     return res
   })
-
-  // var sqlCode = 'DELETE FROM snippet WHERE id = ?'
-
-  // return sqlPut(sqlCode, redirect.id, testMode)
 }
 
 async function getSnippet(snippetid, testMode = false) {
@@ -344,8 +317,6 @@ async function createSnippet(content, description, redirectid, testMode = false)
 }
 
 async function forwardSnippet(index, req, res, testMode = false) {
-  // Retrieve the current snippet.
-
   // Gets Current User
   let alias = await getCurrentUser(req, res).then(res => {
     return res
@@ -402,7 +373,7 @@ async function forwardSnippet(index, req, res, testMode = false) {
   return snippetid
 }
 
-async function sendImageToRandomUsers(data, res, req, testMode = false) {
+async function sendSnippetToRandomUsers(data, res, req, testMode = false) {
   // Gets Current User
   let alias = await getCurrentUser(req, res).then(res => {
     return res
@@ -510,7 +481,6 @@ async function splitSnippet(currentSnippet, redirect0, redirect1, testMode = fal
 /// ///////////////////////////////////////////////
 // Snippet Content Related Calls.
 /// ///////////////////////////////////////////////
-
 async function getSnippetContent(snippetcontentid, testMode = false) {
   var sqlCode = 'SELECT * FROM snippetcontent WHERE id = ?'
   return await sqlGet(sqlCode, snippetcontentid, testMode)

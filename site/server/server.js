@@ -1,7 +1,7 @@
 var path = require('path')
 const express = require('express')
 var bodyParser = require('body-parser')
-var database = require('./database.js')
+var database = require('./database/database.js')
 const app = express()
 var router = express.Router()
 const request = require('request')
@@ -246,7 +246,7 @@ router.post('/send', upload.single('fileupload'), async function (req, res) {
           let resultData = await uploadImage(base64, req.body.title).then(response => {
             return JSON.parse(response)
           })
-          await database.sendImageToRandomUsers(resultData.data, res, req, false).then(response => {})
+          await database.sendSnippetToRandomUsers(resultData.data, res, req, false).then(response => {})
         }
       })
       // tools.sendImage(file.toString('base64'))
