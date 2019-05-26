@@ -14,7 +14,7 @@ function setActive (counter) {
 
   // Need to find the child of the current row as its child snippet contains the actual id.
   var contentID = rowItem.children[0].id
-
+  var snippetID = rowItem.children[0].children[0].id
   // Need to retrieve the content from the server to populate the selected box.
   tools.retrieveSnippetContent(contentID, (err, snippet) => {
     if (err) {
@@ -33,7 +33,7 @@ function setActive (counter) {
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      await tools.forwardSnippet(contentID).then(response => {
+      await tools.forwardSnippet(snippetID).then(response => {
         //   return
         // }
         // console.log('Snippet successfully forwarded')
@@ -42,7 +42,7 @@ function setActive (counter) {
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.deleteSnippet(contentID).then(response => {
+      await tools.deleteSnippet(snippetID).then(response => {
         location.reload(true)
       })
     }

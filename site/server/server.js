@@ -22,7 +22,7 @@ module.exports = {
   generateJWT: generateJWT,
   verifyUserViaAlias: verifyUserViaAlias
 }
-connectToServer()
+connectToServer(false)
 
 // ***************** Authentication Middleware **************** //
 // This is what every request to the server will have to go through first
@@ -39,7 +39,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 // Used to check current user against the cookie token
 
-async function connectToServer () {
+async function connectToServer (testMode) {
   https.createServer({
     key: fs.readFileSync(__dirname + '/credentials/server.key'),
     cert: fs.readFileSync(__dirname + '/credentials/server.cert')
@@ -49,7 +49,6 @@ async function connectToServer () {
 }
 
 router.use(async function (req, res, next) {
-  console.log(req.method, req.url)
   if (req.method != 'POST' && req.url != '/login' && req.url != '/logout') {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
@@ -98,9 +97,7 @@ router.get('/snippetcontent/:id', async function (req, res) {
 
 router.post('/forward-snippet/', async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.snippetid)
-  await database.forwardSnippet(req.body.snippetid, req, res).then(result => {
-    return result
-  })
+  await database.forwardSnippet(req.body.snippetid, req, res)
   res.render('receive')
 })
 
@@ -121,7 +118,7 @@ router.get('/index', async function (req, res) {
     return res
   })
   console.log('GEts Heres', alias)
-  let username = await database.getUserByAlias(req, res).then(res => {
+  let username = await database.getUserByAlias(alias).then(res => {
     return res
   })
   console.log('GEts Heres', username)
@@ -138,7 +135,7 @@ router.get('/send', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  let username = await database.getUserByAlias(req, res).then(res => {
+  let username = await database.getUserByAlias(alias).then(res => {
     return res
   })
   res.render('send', {
@@ -384,7 +381,7 @@ async function renderReceive (req, res) {
           'description': snippetcontent.description,
           'content': snippetcontent.content,
           'id': snippetcontent.id,
-          'parentid': snip.id,
+          'snippetid': snippets[snip].id,
           'username': username
         })
       })

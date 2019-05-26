@@ -1,16 +1,19 @@
 /* eslint-env mocha */
 var expect = require('chai').expect
-var database = require('../server/database.js')
+var database = require('../server/database/database.js')
 
 var redirect = null
 var userID = null
 
 describe('Account creation.', async function () {
+  database.db = connectToServer(true)
   it('Login and redirect are created and retrieved correctly.', async function () {
     // The redirect needs to be created first as the login points to it.
+    console.log('Gets Here')
     var redirectID = await database.createRedirect('TestAlias', 1, true).then(res => {
       return res
     })
+    console.log(redirectID)
     redirect = await database.getRedirect(redirectID, true).then(res => {
       return res[0]
     })

@@ -30,7 +30,7 @@ html(lang=lang)
               for snippetcontent, index in snippetcontents
                 row(id="select-"+index)
                   snippet(href="index" id=snippetcontent.id)
-                    info
+                    info(id=snippetcontent.snippetid)
                       description #{snippetcontent.description}
                       br
                       from #{snippetcontent.username}

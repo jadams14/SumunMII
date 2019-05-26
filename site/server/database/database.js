@@ -46,7 +46,6 @@ module.exports = {
   sendSnippetToUser: sendSnippetToUser
 }
 
-let db = connectDatabase()
 
 // Connect to the database
 function connectDatabase (testMode = false) {
@@ -81,7 +80,7 @@ async function compareHash (plaintext, hash) {
 /// ///////////////////////////////////////////////
 // Generic SQL instruction that returns whatever is returned by the query.
 function sqlGet (sqlCode, lookup, testMode = false) {
-  // let db = connectDatabase(testMode)
+  let db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.all(sqlCode, lookup, function (err, result) {
@@ -91,14 +90,14 @@ function sqlGet (sqlCode, lookup, testMode = false) {
           resolve(result)
         }
       })
-      // closeDatabase(db)
+      closeDatabase(db)
     })
   })
 }
 
 // Generic SQL instruction that returns whatever the new ID inserted is.
 function sqlPut (sqlCode, sqlData, testMode = false) {
-  // var db = connectDatabase(testMode)
+  var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.run(sqlCode, sqlData, function (err, result) {
@@ -108,14 +107,14 @@ function sqlPut (sqlCode, sqlData, testMode = false) {
           resolve(this.lastID)
         }
       })
-      // closeDatabase(db)
+      closeDatabase(db)
     })
   })
 }
 
 // Generic SQL instruction that returns whatever the new ID inserted is.
 function sqlDelete (sqlCode, sqlData, testMode = false) {
-  // var db = connectDatabase(testMode)
+  var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.run(sqlCode, sqlData, function (err, result) {
@@ -125,7 +124,7 @@ function sqlDelete (sqlCode, sqlData, testMode = false) {
           resolve(this.lastID)
         }
       })
-      // closeDatabase(db)
+      closeDatabase(db)
     })
   })
 }
@@ -133,7 +132,7 @@ function sqlDelete (sqlCode, sqlData, testMode = false) {
 // Returns a random entry from the table specified.
 function sqlGetRandom (table, testMode = false) {
   var sqlCode = 'SELECT * FROM ' + table + ' ORDER BY RANDOM() LIMIT 1'
-  // var db = connectDatabase(testMode)
+  var db = connectDatabase(testMode)
   return new Promise(function (resolve, reject) {
     db.serialize(function () {
       db.all(sqlCode, function (err, result) {
@@ -143,7 +142,7 @@ function sqlGetRandom (table, testMode = false) {
           resolve(result)
         }
       })
-      // closeDatabase(db)
+      closeDatabase(db)
     })
   })
 }
@@ -213,10 +212,13 @@ async function getUserByUsername (username, testMode = false) {
 }
 
 async function getUserByAlias (alias, testMode = false) {
-  let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
-    return res[0]
+  console.log(testMode)
+  let redirect = await getRedirectViaAlias(alias, testMode).then(result => {
+    console.log(result)
+    return result[0]
   })
   let sqlCode = 'SELECT * FROM login WHERE redirectid = ?'
+  console.log(redirect)
   let username = await sqlGet(sqlCode, redirect.id, testMode).then(res => {
     return res[0].username
   })
@@ -241,7 +243,7 @@ async function getAllUsers (testMode = false) {
 /// ///////////////////////////////////////////////
 
 async function createRedirect (alias, roleid, testMode = false) {
-  var sqlData = [alias, '[]', roleid]
+  var sqlData = [alias, roleid]
   var sqlCode = 'INSERT INTO redirect (alias, roleid) VALUES (?, ?)'
   return await sqlPut(sqlCode, sqlData, testMode)
 }
@@ -273,8 +275,8 @@ async function updateRedirectSnippetList (redirectid, snippetids, testMode = fal
 }
 
 async function deleteSnippet (index, req, res, testMode = false) {
-  let sqlCode = 'DELETE * FROM snippet WHERE id = ?'
-  return await sqlPut(sqlCode, sqlData, testMode).then(res => {
+  let sqlCode = 'DELETE FROM snippet WHERE id = ?'
+  return await sqlPut(sqlCode, index, testMode).then(res => {
     return res
   })
 }
@@ -335,7 +337,7 @@ async function createSnippetAdmin (contentid, description, redirectid, testMode 
   return snippetID
 }
 
-async function forwardSnippet (contentid, req, res, testMode = false) {
+async function forwardSnippet (snippetid, req, res, testMode = false) {
   // Gets Current User
   let alias = await getCurrentUser(req, res).then(res => {
     return res
@@ -344,7 +346,7 @@ async function forwardSnippet (contentid, req, res, testMode = false) {
   let fromRedirect = await getRedirectViaAlias(alias, testMode).then(res => {
     return res[0]
   })
-  var currentSnippet = await getSnippet(contentid, testMode).then(res => {
+  var currentSnippet = await getSnippet(snippetid, testMode).then(res => {
     return res[0]
   })
   // Retrieve the redirect of two random users.
@@ -368,11 +370,13 @@ async function forwardSnippet (contentid, req, res, testMode = false) {
       return res[0]
     })
   }
+  console.log(snippetid, currentSnippet)
   await splitSnippet(currentSnippet, toRedirect0, toRedirect1)
   await updateForwardCount(currentSnippet.contentid, 2, testMode = false).then(res => {
     return res
   })
-  return snippetid
+  await deleteSnippet(snippetid, req, res)
+  return
 }
 
 async function sendSnippetToRandomUsers (data, res, req, testMode = false) {
@@ -439,6 +443,7 @@ async function createTwoSnippetsViaContent (snippetContent, fromRedirect, redire
 async function splitSnippet (currentSnippet, redirect0, redirect1, testMode = false) {
   // Make the 2 new snippets using the current snippet
   // And the 2 redirects it is being assigned to
+  console.log(currentSnippet)
   var sqlData = [currentSnippet.contentid, redirect0.id, currentSnippet.redirectid]
   sqlCode = 'INSERT INTO snippet (contentid, redirectid, previousowner) VALUES (?, ?, ?)'
   var snippetID0 = await sqlPut(sqlCode, sqlData, testMode).then(res => {

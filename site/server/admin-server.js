@@ -27,7 +27,6 @@ adminRouter.use(bodyParser.json())
 adminRouter.use('/styles', express.static(__dirname + '/styles'))
 
 adminRouter.use(async function (req, res, next) {
-  console.log(req.method, req.url)
   if (req.method != 'POST' && req.url != '/admin/login' && req.url != '/admin/logout') {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res

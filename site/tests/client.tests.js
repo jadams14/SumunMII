@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 var expect = require('chai').expect
-var database = require('../server/database.js')
+var database = require('../server/database/database.js')
 var tools = require('../models/public/scripts/tools.js')
 
 // describe('Account registration.', async function () {
