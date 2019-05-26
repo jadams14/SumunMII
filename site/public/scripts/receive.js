@@ -9,7 +9,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive(counter) {
+function setActive (counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -24,6 +24,12 @@ function setActive(counter) {
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
 
+    $('report-it').onclick = async function () {
+      console.log('trash-it button pressed')
+      await tools.reportSnippet(contentID).then(response => {
+        location.reload(true)
+      })
+    }
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
@@ -44,13 +50,13 @@ function setActive(counter) {
 
   // Unhighlight the current selector and highlight the selected
   var prevRowItem = $('select-' + currentlyActive)
-  prevRowItem.children[0].setAttribute("class", "background1")
+  prevRowItem.children[0].setAttribute('class', 'background1')
   currentlyActive = counter
-  rowItem.children[0].setAttribute("class", "background2")
+  rowItem.children[0].setAttribute('class', 'background2')
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons() {
+function assignButtons () {
   var viable = true
   var counter = 0
   while (viable) {
@@ -76,6 +82,7 @@ function assignButtons() {
 assignButtons()
 
 setActive(0)
+
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')
@@ -90,11 +97,12 @@ module.exports = {
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
   deleteSnippet: deleteSnippet,
-  sendSnippetToUser: sendSnippetToUser, 
-  deleteSnippetContent: deleteSnippetContent
+  sendSnippetToUser: sendSnippetToUser,
+  deleteSnippetContent: deleteSnippetContent,
+  reportSnippet: reportSnippet
 }
 
-function retrieveSnippetContent(id, _callback) {
+function retrieveSnippetContent (id, _callback) {
   request('http://localhost:7000/snippetcontent/' + id, {
     json: true
   }, (err, res, body) => {
@@ -106,7 +114,7 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid) {
+async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -130,12 +138,12 @@ async function deleteSnippet(snippetid) {
   })
 }
 
-async function sendSnippetToUser(contentid, userid) {
+async function sendSnippetToUser (contentid, userid) {
   console.log('tools: send snippet to user', contentid, userid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/sendSnippetToUser/',
     body: JSON.stringify({
-      contentid: contentid, 
+      contentid: contentid,
       userid: userid
     }),
     method: 'POST',
@@ -155,8 +163,31 @@ async function sendSnippetToUser(contentid, userid) {
   })
 }
 
+async function reportSnippet (contentid) {
+  console.log('tools: deleting snippet content', contentid)
+  var requestInfo = {
+    uri: 'http://localhost:7000/reportSnippet/',
+    body: JSON.stringify({
+      contentid: contentid
+    }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
 
-async function deleteSnippetContent(contentid) {
+  return await rp(requestInfo).then(function (err, res) {
+    if (err) {
+      console.log('tools: error forwarding snippet')
+      return false
+    }
+    console.log('tools: error to client: ', err)
+    console.log('tools: body response to client: ', res.body)
+    return res.body
+  })
+}
+
+async function deleteSnippetContent (contentid) {
   console.log('tools: deleting snippet content', contentid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/deleteSnippetContent/',

@@ -17,14 +17,30 @@ const rp = require('request-promise')
 // var certificate = fs.readFileSync('../client-key.pem').toString();
 
 module.exports = {
-  adminRouter: adminRouter,
+  adminRouter: adminRouter
 }
 
 adminRouter.use(express.static(path.join(__dirname, '../public')))
 adminRouter.use(cookieParser())
 adminRouter.use(bodyParser.json())
 
-adminRouter.use("/styles", express.static(__dirname + '/styles'));
+adminRouter.use('/styles', express.static(__dirname + '/styles'))
+
+adminRouter.use(async function (req, res, next) {
+  console.log(req.method, req.url)
+  if (req.method != 'POST' && req.url != '/admin/login' && req.url != '/admin/logout') {
+    let alias = await database.getCurrentUser(req, res).then(res => {
+      return res
+    })
+    if (alias != 'Unsuccessful') {
+      next()
+    } else {
+
+    }
+  } else {
+    next()
+  }
+})
 
 adminRouter.post('/admin/deleteSnippetContent/', async function (req, res) {
   console.log('server: Forwarding snippet id:', req.body.contentid)
@@ -43,9 +59,9 @@ adminRouter.post('/admin/sendSnippetToUser/', async function (req, res) {
 })
 
 adminRouter.get('/admin/index', async function (req, res) {
-  console.log("Gets HEre")
+  console.log('Gets HEre')
   res.render('adminIndex', {
-    user: "Admin"
+    user: 'Admin'
   })
 })
 
@@ -80,11 +96,24 @@ adminRouter.get('/admin/stats', async function (req, res) {
 })
 
 adminRouter.get('/admin/snippets', async function (req, res) {
-  console.log("Gets HEre!!")
+  console.log('Gets HEre!!')
   await renderReceive(req, res)
 })
 
-async function renderReceive(req, res) {
+adminRouter.get('/admin/logout', async function (req, res) {
+  res.cookie('currentUser', '')
+  res.render('login')
+})
+
+adminRouter.post('/admin/reportSnippet/', async function (req, res) {
+  console.log('Reporting snippet', req.body.contentid)
+  await database.reportSnippet(req.body.contentid, req, res, false).then(response => {
+    return response
+  })
+  res.render('adminSnippets')
+})
+
+async function renderReceive (req, res) {
   var clientVariables = {}
   clientVariables.snippetcontents = []
   clientVariables.users = []
@@ -100,11 +129,16 @@ async function renderReceive(req, res) {
     for (var snip in snippets) {
       // Retrieve the snippet content.
       console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip].id)
+      let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
+        return res[0].username
+      })
       clientVariables.snippetcontents.push({
         'description': snippets[snip].description,
         'content': snippets[snip].content,
         'id': snippets[snip].id,
-        'parentid': snippets[snip].id
+        'parentid': snippets[snip].id,
+        'reported': snippets[snip].report,
+        'username': username
       })
     }
   })
@@ -122,7 +156,7 @@ async function renderReceive(req, res) {
       console.log('server: Rendering receive, snippetcontent.id: ', users[user].id)
       clientVariables.users.push({
         'username': users[user].username,
-        'id': users[user].id,
+        'id': users[user].id
       })
     }
   })

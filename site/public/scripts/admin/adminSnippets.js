@@ -15,6 +15,14 @@ function setActive(counter) {
 
   // Need to find the child of the current row as its child snippet contains the actual id.
   var contentID = rowItem.children[0].id
+  console.log(rowItem.children[0].children[0])
+  if (rowItem.children[0].children[0].id == 1) {
+    console.log("Gets Here")
+    $('report-it').style.display = "block"
+  } else {
+    console.log("Gets Here")
+    $('report-it').style.display = "none"
+  }
 
   // Need to retrieve the content from the server to populate the selected box.
   tools.retrieveSnippetContent(contentID, (err, snippet) => {
@@ -24,6 +32,13 @@ function setActive(counter) {
     }
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
+
+    $('report-it').onclick = async function () {
+      console.log('trash-it button pressed')
+      await tools.reportSnippet(contentID).then(response => {
+        location.reload(true)
+      })
+    }
 
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
@@ -124,8 +139,9 @@ module.exports = {
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
   deleteSnippet: deleteSnippet,
-  sendSnippetToUser: sendSnippetToUser, 
-  deleteSnippetContent: deleteSnippetContent
+  sendSnippetToUser: sendSnippetToUser,
+  deleteSnippetContent: deleteSnippetContent,
+  reportSnippet: reportSnippet,
 }
 
 function retrieveSnippetContent(id, _callback) {
@@ -169,7 +185,7 @@ async function sendSnippetToUser(contentid, userid) {
   var requestInfo = {
     uri: 'http://localhost:7000/admin/sendSnippetToUser/',
     body: JSON.stringify({
-      contentid: contentid, 
+      contentid: contentid,
       userid: userid
     }),
     method: 'POST',
@@ -189,6 +205,29 @@ async function sendSnippetToUser(contentid, userid) {
   })
 }
 
+async function reportSnippet(contentid) {
+  console.log('tools: deleting snippet content', contentid)
+  var requestInfo = {
+    uri: 'http://localhost:7000/reportSnippet/',
+    body: JSON.stringify({
+      contentid: contentid
+    }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+
+  return await rp(requestInfo).then(function (err, res) {
+    if (err) {
+      console.log('tools: error forwarding snippet')
+      return false
+    }
+    console.log('tools: error to client: ', err)
+    console.log('tools: body response to client: ', res.body)
+    return res.body
+  })
+}
 
 async function deleteSnippetContent(contentid) {
   console.log('tools: deleting snippet content', contentid)
@@ -214,7 +253,7 @@ async function deleteSnippetContent(contentid) {
   })
 }
 
-async function forwardSnippet (snippetid) {
+async function forwardSnippet(snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -239,7 +278,7 @@ async function forwardSnippet (snippetid) {
   })
 }
 
-async function createSnippet (content, description, redirectid, _callback) {
+async function createSnippet(content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {
@@ -264,7 +303,6 @@ async function createSnippet (content, description, redirectid, _callback) {
     return res.body
   })
 }
-
 },{"request":132,"request-promise":131}],3:[function(require,module,exports){
 'use strict';
 

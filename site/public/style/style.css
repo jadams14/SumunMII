@@ -482,6 +482,7 @@ receive snippet-selected report {
   width: auto;
   right: 6px;
   top: 6px;
+  cursor: pointer;
 }
 receive snippet-selected control-box {
   display: block;
@@ -829,6 +830,14 @@ adminSnippets snippet-list snippet info from {
   font-size: 14px;
   font-family: GlacialIndifferenceItalic;
 }
+adminSnippets snippet-list snippet info reported {
+  content: url("/assets/images/reported.png");
+  height: 30%;
+  width: 30%;
+  right: 6px;
+  top: 6px;
+  cursor: pointer;
+}
 adminSnippets snippet-list snippet img {
   width: 40%;
   height: auto;
@@ -890,13 +899,13 @@ adminSnippets snippet-selected img {
   max-width: 95%;
 }
 adminSnippets snippet-selected report {
-  content: url("/assets/images/report.png");
-  display: block;
+  content: url("/assets/images/R.png");
   position: absolute;
-  height: 5%;
+  height: 10%;
   width: auto;
   right: 6px;
   top: 6px;
+  cursor: pointer;
 }
 adminSnippets snippet-selected control-box {
   display: block;

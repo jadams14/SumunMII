@@ -34,35 +34,38 @@ $color-shadow: #00000080;
 /* Fonts -------------------------------------------------------------------- */
 
 @font-face {
-  font-family: 'GlacialIndifference';
-  src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf") format("opentype");
+  font-family: "GlacialIndifference";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf")
+    format("opentype");
 }
 
 @font-face {
-  font-family: 'GlacialIndifferenceBold';
-  src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf") format("opentype");
+  font-family: "GlacialIndifferenceBold";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf")
+    format("opentype");
   font-weight: bold;
 }
 
 @font-face {
-  font-family: 'GlacialIndifferenceItalic';
-  src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf") format("opentype");
+  font-family: "GlacialIndifferenceItalic";
+  src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf")
+    format("opentype");
   font-weight: italic;
 }
 
 @font-face {
-  font-family: 'OpenSans';
+  font-family: "OpenSans";
   src: url("fonts/open-sans/OpenSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'OpenSansBold';
+  font-family: "OpenSansBold";
   src: url("fonts/open-sans/OpenSans-Bold.ttf") format("truetype");
   font-weight: bold;
 }
 
 @font-face {
-  font-family: 'OpenSansItalic';
+  font-family: "OpenSansItalic";
   src: url("fonts/open-sans/OpenSans-Italic.ttf") format("truetype");
   font-weight: italic;
 }
@@ -158,8 +161,6 @@ img {
   background-color: $color-light;
 }
 
-
-
 /* Animations --------------------------------------------------------------- */
 
 @keyframes shake {
@@ -179,8 +180,6 @@ img {
     transform: translate(0%, 0%) rotate(0deg);
   }
 }
-
-
 
 @keyframes fadeIn {
   0% {
@@ -215,7 +214,6 @@ img {
     transform: none;
   }
 }
-
 
 @keyframes spin {
   100% {
@@ -315,8 +313,6 @@ index {
   background-color: $color-light;
   border-radius: 6px;
   padding: 10px;
-
-
 
   house {
     content: url("/assets/images/simun-logo.png");
@@ -484,7 +480,6 @@ receive {
         }
       }
 
-
       img {
         width: 40%;
         height: auto;
@@ -498,7 +493,6 @@ receive {
       background-color: $color-light;
     }
   }
-
 
   h1 {
     color: $color-light;
@@ -524,7 +518,6 @@ receive {
       display: block;
       position: fixed;
       display: flex;
-
 
       description {
         margin: auto;
@@ -563,6 +556,7 @@ receive {
       width: auto;
       right: 6px;
       top: 6px;
+      cursor: pointer;
     }
 
     control-box {
@@ -725,7 +719,13 @@ send {
   position: relative;
   width: 100%;
   height: 100vh;
-  background-image: radial-gradient(circle, $color-dark 70%, $color-light, $color-dark, $color-dark);
+  background-image: radial-gradient(
+    circle,
+    $color-dark 70%,
+    $color-light,
+    $color-dark,
+    $color-dark
+  );
 
   form {
     padding-top: 100px;
@@ -818,7 +818,6 @@ stats {
     border-collapse: separate;
     border-spacing: 1.5px 1.5px;
 
-
     table-scroll {
       width: 100%;
       margin: auto;
@@ -838,7 +837,6 @@ stats {
       column-span: 3;
       margin-bottom: 1px;
     }
-
 
     snippet {
       display: table-cell;
@@ -866,8 +864,6 @@ stats {
     snippet:hover {
       background-color: $color-light;
     }
-
-
   }
 
   snippet-selected {
@@ -879,7 +875,7 @@ stats {
     background-color: $color-light;
     border-radius: 6px;
     padding: 10px;
-    transition: all .5s linear;
+    transition: all 0.5s linear;
 
     img {
       display: block;
@@ -957,8 +953,16 @@ adminSnippets {
           font-size: 14px;
           font-family: GlacialIndifferenceItalic;
         }
-      }
 
+        reported {
+          content: url("/assets/images/reported.png");
+          height: 30%;
+          width: 30%;
+          right: 6px;
+          top: 6px;
+          cursor: pointer;
+        }
+      }
 
       img {
         width: 40%;
@@ -973,7 +977,6 @@ adminSnippets {
       background-color: $color-light;
     }
   }
-
 
   h1 {
     color: $color-light;
@@ -1000,7 +1003,6 @@ adminSnippets {
       display: block;
       position: fixed;
       display: flex;
-
 
       description {
         margin: auto;
@@ -1032,13 +1034,13 @@ adminSnippets {
     }
 
     report {
-      content: url("/assets/images/report.png");
-      display: block;
+      content: url("/assets/images/R.png");
       position: absolute;
-      height: 5%;
+      height: 10%;
       width: auto;
       right: 6px;
       top: 6px;
+      cursor: pointer;
     }
 
     control-box {
@@ -1142,5 +1144,4 @@ adminSnippets {
       background-color: $color-light;
     }
   }
-
 }

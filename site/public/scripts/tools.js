@@ -12,11 +12,12 @@ module.exports = {
   forwardSnippet: forwardSnippet,
   createSnippet: createSnippet,
   deleteSnippet: deleteSnippet,
-  sendSnippetToUser: sendSnippetToUser, 
-  deleteSnippetContent: deleteSnippetContent
+  sendSnippetToUser: sendSnippetToUser,
+  deleteSnippetContent: deleteSnippetContent,
+  reportSnippet: reportSnippet
 }
 
-function retrieveSnippetContent(id, _callback) {
+function retrieveSnippetContent (id, _callback) {
   request('http://localhost:7000/snippetcontent/' + id, {
     json: true
   }, (err, res, body) => {
@@ -28,7 +29,7 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid) {
+async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -52,12 +53,12 @@ async function deleteSnippet(snippetid) {
   })
 }
 
-async function sendSnippetToUser(contentid, userid) {
+async function sendSnippetToUser (contentid, userid) {
   console.log('tools: send snippet to user', contentid, userid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/sendSnippetToUser/',
     body: JSON.stringify({
-      contentid: contentid, 
+      contentid: contentid,
       userid: userid
     }),
     method: 'POST',
@@ -77,8 +78,31 @@ async function sendSnippetToUser(contentid, userid) {
   })
 }
 
+async function reportSnippet (contentid) {
+  console.log('tools: deleting snippet content', contentid)
+  var requestInfo = {
+    uri: 'http://localhost:7000/reportSnippet/',
+    body: JSON.stringify({
+      contentid: contentid
+    }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
 
-async function deleteSnippetContent(contentid) {
+  return await rp(requestInfo).then(function (err, res) {
+    if (err) {
+      console.log('tools: error forwarding snippet')
+      return false
+    }
+    console.log('tools: error to client: ', err)
+    console.log('tools: body response to client: ', res.body)
+    return res.body
+  })
+}
+
+async function deleteSnippetContent (contentid) {
   console.log('tools: deleting snippet content', contentid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/deleteSnippetContent/',

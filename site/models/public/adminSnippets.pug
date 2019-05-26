@@ -29,10 +29,14 @@ html(lang=lang)
                 for snippetcontent, index in snippetcontents
                   row(id="select-"+index)
                     snippet(href="index" id=snippetcontent.id)
-                      info
+                      info(id=snippetcontent.reported)
                         description #{snippetcontent.description}
                         br
-                        from jadams
+                        from #{snippetcontent.username}
+                        br
+                        if (snippetcontent.reported == 1)
+                          a(id="reported" name="button" type="submit" title="Report It" value="report-it")
+                            reported
                       img(src=snippetcontent.content)
             snippet-selected
               info
@@ -40,7 +44,7 @@ html(lang=lang)
                 br
                 from(id="selected-author")
               img(id="selected-content")
-              a(href="" title="Report")
+              a(id="report-it" name="button" type="submit" style="display: none;" title="Report It" value="report-it")
                 report
               control-box
                 a(id="trash-it" type="submit" name="button" value="trash-it" title="Trash It" )

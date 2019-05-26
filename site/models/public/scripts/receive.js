@@ -8,7 +8,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive(counter) {
+function setActive (counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -23,6 +23,12 @@ function setActive(counter) {
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
 
+    $('report-it').onclick = async function () {
+      console.log('trash-it button pressed')
+      await tools.reportSnippet(contentID).then(response => {
+        location.reload(true)
+      })
+    }
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
@@ -43,13 +49,13 @@ function setActive(counter) {
 
   // Unhighlight the current selector and highlight the selected
   var prevRowItem = $('select-' + currentlyActive)
-  prevRowItem.children[0].setAttribute("class", "background1")
+  prevRowItem.children[0].setAttribute('class', 'background1')
   currentlyActive = counter
-  rowItem.children[0].setAttribute("class", "background2")
+  rowItem.children[0].setAttribute('class', 'background2')
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons() {
+function assignButtons () {
   var viable = true
   var counter = 0
   while (viable) {

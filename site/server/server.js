@@ -39,7 +39,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 // Used to check current user against the cookie token
 
-async function connectToServer() {
+async function connectToServer () {
   https.createServer({
     key: fs.readFileSync(__dirname + '/credentials/server.key'),
     cert: fs.readFileSync(__dirname + '/credentials/server.cert')
@@ -50,7 +50,7 @@ async function connectToServer() {
 
 router.use(async function (req, res, next) {
   console.log(req.method, req.url)
-  if (req.method != "POST" && req.url != "/login" && req.url != "/logout") {
+  if (req.method != 'POST' && req.url != '/login' && req.url != '/logout') {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
     })
@@ -81,6 +81,14 @@ router.get('/logout', (req, res) => {
   res.render('login')
 })
 
+router.post('/reportSnippet/', async function (req, res) {
+  console.log('Reporting snippet', req.body.contentid)
+  await database.reportSnippet(req.body.contentid, req, res, false).then(response => {
+    return response
+  })
+  res.render('receive')
+})
+
 router.get('/snippetcontent/:id', async function (req, res) {
   console.log('server: Retrieving snippet content with id:', req.params.id)
   await database.getSnippetContent(req.params.id).then(response => {
@@ -108,15 +116,15 @@ router.post('/create-snippet/', async function (req, res) {
 // Page requests.
 /// ///////////////////////////////////////////////
 router.get('/index', async function (req, res) {
-  console.log("GEts Heres")
+  console.log('GEts Heres')
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log("GEts Heres", alias)
+  console.log('GEts Heres', alias)
   let username = await database.getUserByAlias(req, res).then(res => {
     return res
   })
-  console.log("GEts Heres", username)
+  console.log('GEts Heres', username)
   res.render('index', {
     user: username
   })
@@ -166,12 +174,10 @@ router.get('/login', async function (req, res) {
 })
 
 router.get('/receive', async function (req, res) {
-
   await renderReceive(req, res)
 })
 
 router.get('/stats/snippets/:index', async function (req, res) {
-
   var clientVariables = {}
   clientVariables.snippetcontents = []
   // Need to load snippet data from the database to display on the page.
@@ -200,10 +206,8 @@ router.get('/stats/snippets/:index', async function (req, res) {
     }, 100)
   })
 })
-
 
 router.get('/stats', async function (req, res) {
-
   var clientVariables = {}
   clientVariables.snippetcontents = []
   // Need to load snippet data from the database to display on the page.
@@ -232,7 +236,6 @@ router.get('/stats', async function (req, res) {
     }, 100)
   })
 })
-
 
 router.post('/send', upload.single('fileupload'), async function (req, res) {
   const directoryPath = path.join(__dirname, 'images')
@@ -293,8 +296,6 @@ router.post('/receive', async function (req, res) {
   }
 })
 
-
-
 router.post('/register', async function (req, res) {
   var username = req.body.username
   var password = req.body.password
@@ -310,12 +311,12 @@ router.post('/register', async function (req, res) {
       console.log(password)
       if (regex.test(password)) {
         await database.createUser(username, password)
-        console.log("Gets Here!!")
+        console.log('Gets Here!!')
         res.render('login', {
           lMessage: 'Please Login Using Your New Credentials!'
         })
       } else {
-        console.log("Gets Here!")
+        console.log('Gets Here!')
         res.render('register', {
           rMessage: 'Passwords must be between 8 and 16 characters, require atleast 1 special character, number, uppercase and a lower case letter!'
         })
@@ -326,7 +327,7 @@ router.post('/register', async function (req, res) {
   }
 })
 
-async function uploadImage(img, fileName) {
+async function uploadImage (img, fileName) {
   // let image = await getDataUri(img, function (dataUri) {
   //   return dataUri
   // })
@@ -352,8 +353,8 @@ async function uploadImage(img, fileName) {
   return result
 }
 
-async function renderReceive(req, res) {
-  console.log("Gets HEre")
+async function renderReceive (req, res) {
+  console.log('Gets HEre')
   var clientVariables = {}
   clientVariables.snippetcontents = []
   let alias = await database.getCurrentUser(req, res).then(res => {
@@ -373,14 +374,18 @@ async function renderReceive(req, res) {
     // snippets.forEach(async function (entry, index) {
     for (var snip in snippets) {
       // Retrieve the snippet content.
-      await database.getSnippetContent(snippets[snip].contentid).then(snippetcontent => {
+      await database.getSnippetContent(snippets[snip].contentid).then(async function (snippetcontent) {
         snippetcontent = snippetcontent[0]
+        let username = await database.getUsernameViaRedirect(snippetcontent.sender).then(res => {
+          return res[0].username
+        })
         console.log('server: Rendering receive, snippetcontent.id: ', snippetcontent.id)
         clientVariables.snippetcontents.push({
           'description': snippetcontent.description,
           'content': snippetcontent.content,
           'id': snippetcontent.id,
-          'parentid': snip.id
+          'parentid': snip.id,
+          'username': username
         })
       })
     }
@@ -390,7 +395,7 @@ async function renderReceive(req, res) {
   })
 }
 
-async function verifyUserViaAlias(res, req, alias) {
+async function verifyUserViaAlias (res, req, alias) {
   await database.getRedirectViaAlias(alias, false).then(async function (result) {
     if (result.length > 0) {
       if (
@@ -405,7 +410,7 @@ async function verifyUserViaAlias(res, req, alias) {
           })
         } else if (result[0].roleid == 0) {
           res.render('adminIndex', {
-            user: "Admin"
+            user: 'Admin'
           })
         }
       } else {
@@ -418,7 +423,7 @@ async function verifyUserViaAlias(res, req, alias) {
 }
 
 // Authenticates username and password for login
-async function authenticate(res, req, username, password) {
+async function authenticate (res, req, username, password) {
   // let sqlQuery = 'SELECT * FROM Login WHERE username = ?'
   // let sqlData = username
   console.log(username, password)
@@ -436,10 +441,9 @@ async function authenticate(res, req, username, password) {
           res.render('index', {
             user: username
           })
-
         } else {
           res.render('adminIndex', {
-            user: "Admin"
+            user: 'Admin'
           })
         }
       } else {
@@ -455,7 +459,7 @@ async function authenticate(res, req, username, password) {
   })
 }
 
-async function generateJWT(res, req, redirectid, cookieName) {
+async function generateJWT (res, req, redirectid, cookieName) {
   var alias = await database.getRedirect(redirectid).then(res => {
     return res[0].alias
   })
