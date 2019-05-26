@@ -442,14 +442,16 @@ receive snippet-selected {
   border-radius: 6px;
   padding: 10px;
 }
-receive snippet-selected info description {
+receive snippet-selected info {
+  width: 70%;
+  height: 10%;
   display: block;
-  position: absolute;
-  text-align: center;
-  left: 50%;
-  top: 10%;
-  transform: translate(-50%, -50%);
-  font-size: 30px;
+  position: fixed;
+  display: flex;
+}
+receive snippet-selected info description {
+  margin: auto;
+  font-size: 25px;
   font-family: GlacialIndifferenceBold;
 }
 receive snippet-selected info from {
@@ -767,6 +769,223 @@ stats snippet-selected img {
   width: auto;
   max-width: 95%;
   color: #2f4550;
+}
+
+adminSnippets {
+  background-color: #2f4550;
+}
+adminSnippets forms {
+  width: 100%;
+  height: 100%;
+}
+adminSnippets snippet-list {
+  margin: 12px 4px 0px 0px;
+  display: table;
+  width: 28%;
+  background-color: #2f4550;
+  border-collapse: separate;
+  border-spacing: 1.5px 1.5px;
+  float: left;
+}
+adminSnippets snippet-list table-scroll {
+  max-width: 1280px;
+  width: 100%;
+  margin: auto;
+  display: block;
+}
+adminSnippets snippet-list table-wrap {
+  width: 100%;
+  display: block;
+  height: 300px;
+  overflow: auto;
+  position: absolute;
+  z-index: 1;
+}
+adminSnippets snippet-list row {
+  cursor: pointer;
+  display: table-row;
+  column-span: 2;
+  margin-bottom: 10px;
+}
+adminSnippets snippet-list snippet {
+  display: table-cell;
+  width: 30%;
+  background-color: #586f7c;
+  padding: 10px;
+  border-radius: 6px;
+}
+adminSnippets snippet-list snippet info {
+  width: 55%;
+  float: left;
+  text-align: left;
+  display: block;
+  overflow: auto;
+}
+adminSnippets snippet-list snippet info description {
+  position: relative;
+  font-size: 20px;
+}
+adminSnippets snippet-list snippet info from {
+  font-size: 14px;
+  font-family: GlacialIndifferenceItalic;
+}
+adminSnippets snippet-list snippet img {
+  width: 40%;
+  height: auto;
+  max-height: 200px;
+  float: right;
+  display: block;
+}
+adminSnippets snippet-list snippet:hover {
+  background-color: #b8dbd9;
+}
+adminSnippets h1 {
+  color: #b8dbd9;
+  font-size: 100px;
+  text-align: center;
+}
+adminSnippets snippet-selected {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 28%;
+  right: 0;
+  bottom: 0;
+  margin: 80px 3px 3px 3px;
+  background-color: #b8dbd9;
+  border-radius: 6px;
+  padding: 10px;
+  width: 48%;
+}
+adminSnippets snippet-selected info {
+  width: 50%;
+  height: 10%;
+  display: block;
+  position: fixed;
+  display: flex;
+}
+adminSnippets snippet-selected info description {
+  margin: auto;
+  font-size: 25px;
+  font-family: GlacialIndifferenceBold;
+}
+adminSnippets snippet-selected info from {
+  display: block;
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  top: 79%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  font-family: GlacialIndifferenceItalic;
+}
+adminSnippets snippet-selected img {
+  display: block;
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 60%;
+  width: auto;
+  max-width: 95%;
+}
+adminSnippets snippet-selected report {
+  content: url("/assets/images/report.png");
+  display: block;
+  position: absolute;
+  height: 5%;
+  width: auto;
+  right: 6px;
+  top: 6px;
+}
+adminSnippets snippet-selected control-box {
+  display: block;
+  position: absolute;
+  background-color: #586f7c;
+  height: 8%;
+  width: 20%;
+  top: 88%;
+  left: 50%;
+  border-radius: 12px;
+  transform: translate(-50%, -50%);
+}
+adminSnippets snippet-selected control-box a {
+  cursor: pointer;
+}
+adminSnippets snippet-selected control-box trash-it {
+  content: url("/assets/images/bin.png");
+  display: block;
+  float: left;
+  position: absolute;
+  height: 70%;
+  width: auto;
+  top: 50%;
+  left: 10%;
+  transform: translate(0%, -50%);
+  cursor: pointer;
+}
+adminSnippets snippet-selected control-box forward-it {
+  content: url("/assets/images/plane-mail.png");
+  display: block;
+  float: left;
+  height: 70%;
+  width: auto;
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translate(0%, -50%);
+  cursor: pointer;
+}
+adminSnippets user-list {
+  float: right;
+  margin: 10px 0px 0px 0px;
+  display: table;
+  width: 22.5%;
+  background-color: #2f4550;
+  border-collapse: separate;
+  border-spacing: 1.5px 1.5px;
+  overflow: scroll;
+}
+adminSnippets user-list table-scroll {
+  max-width: 1280px;
+  width: 100%;
+  margin: auto;
+  display: block;
+}
+adminSnippets user-list table-wrap {
+  width: 100%;
+  display: block;
+  height: 300px;
+  overflow: auto;
+  position: absolute;
+  z-index: 1;
+}
+adminSnippets user-list userRow {
+  cursor: pointer;
+  display: table-row;
+  column-span: 2;
+  margin-bottom: 10px;
+}
+adminSnippets user-list user {
+  display: table-cell;
+  width: 30%;
+  background-color: #586f7c;
+  padding: 10px;
+  border-radius: 6px;
+}
+adminSnippets user-list user info {
+  width: 55%;
+  float: left;
+  text-align: left;
+  display: block;
+  overflow: auto;
+}
+adminSnippets user-list user info name {
+  position: relative;
+  font-size: auto;
+}
+adminSnippets user-list user:hover {
+  background-color: #b8dbd9;
 }
 
 /*# sourceMappingURL=style.css.map */

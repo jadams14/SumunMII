@@ -31,7 +31,7 @@ function setActive (counter) {
 }
 
 function setHeight() {
-  let height = $('table').offsetHeight + 50
+  let height = $('table').offsetHeight
   $('snippet-selected').setAttribute("style", "height:" + height + 'px')
 }
 
