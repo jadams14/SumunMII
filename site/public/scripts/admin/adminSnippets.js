@@ -28,13 +28,13 @@ function setActive(counter) {
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      await tools.sendSnippetToUser(counter, userActive).then(response => {
+      await tools.sendSnippetToUser(contentID, userActive).then(response => {
         location.reload(true)
       })
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.deleteSnippetContent(counter).then(response => {
+      await tools.deleteSnippetContent(contentID).then(response => {
         location.reload(true)
       })
     }

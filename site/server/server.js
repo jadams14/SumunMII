@@ -52,14 +52,12 @@ router.use(async function (req, res, next) {
   console.log(req.method, req.url)
   if (req.method != "POST" && req.url != "/login" && req.url != "/logout") {
     let alias = await database.getCurrentUser(req, res).then(res => {
-      console.log("GEts HEre!", res)
       return res
     })
     if (alias != 'Unsuccessful') {
-      console.log("GEts HEre")
       next()
     } else {
-      console.log("GEts HEre!!")
+
     }
   } else {
     next()
@@ -362,9 +360,10 @@ async function renderReceive(req, res) {
     return res
   })
   // Need to load snippet data from the database to display on the page.
-  await database.getRedirectViaAlias(alias).then(async function (redirect) {
-    redirect = redirect[0]
-    var snippets = JSON.parse(redirect.snippetids)
+  let redirect = await database.getRedirectViaAlias(alias).then(async function (redirect) {
+    return redirect[0]
+  })
+  await database.getAllUserSnippets(redirect.id).then(async function (snippets) {
     if (snippets == null || snippets.length == 0) {
       res.render('receive', {
         noSnippetMessage: 'You currently don\'t have any snippets!'
@@ -373,19 +372,15 @@ async function renderReceive(req, res) {
     // For each snippet, retrieve the snippet content ID.
     // snippets.forEach(async function (entry, index) {
     for (var snip in snippets) {
-      await database.getSnippet(snippets[snip]).then(async function (snippet) {
-        snippet = snippet[0]
-        // Retrieve the snippet content.
-        await database.getSnippetContent(snippet.contentid).then(snippetcontent => {
-          console.log(snippetcontent)
-          snippetcontent = snippetcontent[0]
-          console.log('server: Rendering receive, snippetcontent.id: ', snippetcontent.id)
-          clientVariables.snippetcontents.push({
-            'description': snippetcontent.description,
-            'content': snippetcontent.content,
-            'id': snippetcontent.id,
-            'parentid': snippet.id
-          })
+      // Retrieve the snippet content.
+      await database.getSnippetContent(snippets[snip].contentid).then(snippetcontent => {
+        snippetcontent = snippetcontent[0]
+        console.log('server: Rendering receive, snippetcontent.id: ', snippetcontent.id)
+        clientVariables.snippetcontents.push({
+          'description': snippetcontent.description,
+          'content': snippetcontent.content,
+          'id': snippetcontent.id,
+          'parentid': snip.id
         })
       })
     }

@@ -34,7 +34,7 @@ module.exports = {
     createSnippet: createSnippet,
     forwardSnippet: forwardSnippet,
     deleteSnippet: deleteSnippet,
-    addSnippetToList: addSnippetToList,
+    getAllUserSnippets: getAllUserSnippets,
 
     getSnippetContent: getSnippetContent,
     removeSnippetContent: removeSnippetContent,
@@ -241,7 +241,7 @@ async function getAllUsers(testMode = false) {
 
 async function createRedirect(alias, roleid, testMode = false) {
     var sqlData = [alias, '[]', roleid]
-    var sqlCode = 'INSERT INTO redirect (alias, snippetids, roleid) VALUES (?, ?, ?)'
+    var sqlCode = 'INSERT INTO redirect (alias, roleid) VALUES (?, ?)'
     return await sqlPut(sqlCode, sqlData, testMode)
 }
 
@@ -272,26 +272,19 @@ async function updateRedirectSnippetList(redirectid, snippetids, testMode = fals
 }
 
 async function deleteSnippet(index, req, res, testMode = false) {
-    let alias = await getCurrentUser(req, res).then(res => {
-        return res
-    })
-    let redirect = await getRedirectViaAlias(alias, testMode).then(res => {
-        return res[0]
-    })
-    let snippetList = JSON.parse(redirect.snippetids)
-    if (snippetList.length == 1) {
-        snippetList = []
-    } else {
-        snippetList.splice(index, 1)
-    }
-    snippetList = JSON.stringify(snippetList)
-    return await updateRedirectSnippetList(redirect.id, snippetList, testMode).then(res => {
+    let sqlCode = 'DELETE * FROM snippet WHERE id = ?'
+    return await sqlPut(sqlCode, sqlData, testMode).then(res => {
         return res
     })
 }
 
 async function getSnippet(snippetid, testMode = false) {
     var sqlCode = 'SELECT * FROM snippet WHERE id = ?'
+    return await sqlGet(sqlCode, snippetid, testMode)
+}
+
+async function getAllUserSnippets(snippetid, testMode = false) {
+    var sqlCode = 'SELECT * FROM snippet WHERE redirectid = ?'
     return await sqlGet(sqlCode, snippetid, testMode)
 }
 
@@ -335,22 +328,7 @@ async function createSnippetAdmin(contentid, description, redirectid, testMode =
     return snippetID
 }
 
-async function addSnippetToList(redirectid, snippetID, testMode = false) {
-    var fromRedirect = await getRedirect(redirectid, testMode).then(res => {
-        return res[0]
-    })
-    // Append the snippet ID to the redirects list of owned redirect IDs.
-    var snippetList = JSON.parse(fromRedirect.snippetids)
-    snippetList.push(snippetID.toString())
-    console.log(snippetList)
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(fromRedirect.id, snippetList, testMode).then(res => {
-        return res
-    })
-    return
-}
-
-async function forwardSnippet(index, req, res, testMode = false) {
+async function forwardSnippet(contentid, req, res, testMode = false) {
     // Gets Current User
     let alias = await getCurrentUser(req, res).then(res => {
         return res
@@ -359,9 +337,7 @@ async function forwardSnippet(index, req, res, testMode = false) {
     let fromRedirect = await getRedirectViaAlias(alias, testMode).then(res => {
         return res[0]
     })
-    var snippetid = JSON.parse(fromRedirect.snippetids)
-    snippetid = snippetid[index]
-    var currentSnippet = await getSnippet(snippetid, testMode).then(res => {
+    var currentSnippet = await getSnippet(contentid, testMode).then(res => {
         return res[0]
     })
     // Retrieve the redirect of two random users.
@@ -386,21 +362,6 @@ async function forwardSnippet(index, req, res, testMode = false) {
         })
     }
     await splitSnippet(currentSnippet, toRedirect0, toRedirect1)
-    // Remove the snippet ID in the original redirects list of snippet IDs.
-    snippetList = JSON.parse(fromRedirect.snippetids)
-    if (snippetList.length == 1) {
-        snippetList = []
-    } else {
-        snippetList.splice(index, 1)
-    }
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(fromRedirect.id, snippetList, testMode).then(res => {
-        return res
-    })
-    // Remove the original snippet
-    // await removeSnippet(currentSnippet.id, testMode).then(res => {
-    //   return res
-    // })
     await updateForwardCount(currentSnippet.contentid, 2, testMode = false).then(res => {
         return res
     })
@@ -465,21 +426,7 @@ async function createTwoSnippetsViaContent(snippetContent, fromRedirect, redirec
     var snippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
         return res
     })
-
-    // Append the snippet ID to each of the toRedirects list of snippet IDs.
-    var snippetList = JSON.parse(redirect0.snippetids)
-    snippetList.push(snippetID0.toString())
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(redirect0.id, snippetList, testMode).then(res => {
-        return res
-    })
-
-    snippetList = JSON.parse(redirect1.snippetids)
-    snippetList.push(snippetID1.toString())
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(redirect1.id, snippetList, testMode).then(res => {
-        return res
-    })
+    return snippetID1
 }
 
 async function splitSnippet(currentSnippet, redirect0, redirect1, testMode = false) {
@@ -495,21 +442,7 @@ async function splitSnippet(currentSnippet, redirect0, redirect1, testMode = fal
     var snippetID1 = await sqlPut(sqlCode, sqlData, testMode).then(res => {
         return res
     })
-
-    // Append the snippet ID to each of the toRedirects list of snippet IDs.
-    var snippetList = JSON.parse(redirect0.snippetids)
-    snippetList.push(snippetID0.toString())
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(redirect0.id, snippetList, testMode).then(res => {
-        return res
-    })
-
-    snippetList = JSON.parse(redirect1.snippetids)
-    snippetList.push(snippetID1.toString())
-    snippetList = JSON.stringify(snippetList)
-    await updateRedirectSnippetList(redirect1.id, snippetList, testMode).then(res => {
-        return res
-    })
+    return [snippetID0, snippetID1]
 }
 
 /// ///////////////////////////////////////////////
@@ -546,8 +479,10 @@ async function getAllSnippetContents(testMode = false) {
 }
 
 async function deleteSnippetContent(contentid, testMode = false) {
-    let sqlCode = 'SELECT * FROM snippetcontent WHERE contentid = ?'
-    return await sqlGet(sqlCode, contentid, testMode)
+    let sqlCode = 'DELETE FROM snippetcontent WHERE id = ?'
+    await sqlPut(sqlCode, contentid, testMode)
+    sqlCode = 'DELETE FROM snippet WHERE contentid = ?'
+    await sqlPut(sqlCode, contentid, testMode)
 }
 
 async function sendSnippetToUser(contentid, userid, testMode = false) {
@@ -558,5 +493,4 @@ async function sendSnippetToUser(contentid, userid, testMode = false) {
     let snippet = await createSnippet(snippetContent.content, snippetContent.description, userid, testMode).then(res => {
         return res
     })
-    return await addSnippetToList(userid, snippet, testMode)
 }
