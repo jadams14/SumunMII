@@ -1,7 +1,8 @@
+var database = require('./database/database.js')
+var adminServer = require('./admin-server.js')
 var path = require('path')
 const express = require('express')
 var bodyParser = require('body-parser')
-var database = require('./database/database.js')
 const app = express()
 var router = express.Router()
 const request = require('request')
@@ -36,7 +37,6 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(cookieParser())
 app.use(bodyParser.json())
-app.use('/', router)
 // Used to check current user against the cookie token
 
 async function connectToServer() {
@@ -48,6 +48,22 @@ async function connectToServer() {
   })
 }
 
+router.use(async function (req, res, next) {
+  console.log(req.method, req.url)
+  if (req.method != "POST" && req.url != "/login" && req.url != "/logout") {
+    let alias = await database.getCurrentUser(req, res).then(res => {
+      return res
+    })
+    if (alias != 'Unsuccessful') {
+      next()
+    } else {
+
+    }
+  } else {
+    next()
+  }
+})
+
 /// ///////////////////////////////////////////////
 // Non page requests.
 /// ///////////////////////////////////////////////
@@ -57,7 +73,6 @@ router.post('/receive/deleteSnippet/', async function (req, res) {
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
-  console.log("Gets HERE!!!")
   res.render('receive')
 })
 
@@ -78,32 +93,33 @@ router.post('/forward-snippet/', async function (req, res) {
   await database.forwardSnippet(req.body.snippetid, req, res).then(result => {
     return result
   })
-  console.log("Gets HERE!!!!!")
   res.render('receive')
 })
 
 router.post('/create-snippet/', async function (req, res) {
   console.log('server: Creating snippet with content:', req.body.content, 'description:', req.body.description, 'redirectid:', req.body.redirectid)
-  await database.createSnippet(req.body.content, req.body.description, req.body.redirectid).then(res => {
+  let snippetid = await database.createSnippet(req.body.content, req.body.description, req.body.redirectid).then(res => {
     return res
   })
+  await database.addSnippetToList(req.body.redirectid, snippetid)
 })
 
 /// ///////////////////////////////////////////////
 // Page requests.
 /// ///////////////////////////////////////////////
 router.get('/index', async function (req, res) {
+  console.log("GEts Heres")
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != 'Unsuccessful') {
-    let username = await database.getUserByAlias(alias).then(res => {
-      return res
-    })
-    res.render('index', {
-      user: username
-    })
-  }
+  console.log("GEts Heres", alias)
+  let username = await database.getUserByAlias(req, res).then(res => {
+    return res
+  })
+  console.log("GEts Heres", username)
+  res.render('index', {
+    user: username
+  })
 })
 
 router.get('/register', function (req, res) {
@@ -114,12 +130,12 @@ router.get('/send', async function (req, res) {
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  if (alias != 'Unsuccessful') {
-    let username = await database.getUserByAlias(alias, false)
-    res.render('send', {
-      from: username
-    })
-  }
+  let username = await database.getUserByAlias(req, res).then(res => {
+    return res
+  })
+  res.render('send', {
+    from: username
+  })
 })
 
 // The next 2 requests include the authentication
@@ -150,83 +166,71 @@ router.get('/login', async function (req, res) {
 })
 
 router.get('/receive', async function (req, res) {
-  let alias = await database.getCurrentUser(req, res).then(res => {
-    return res
-  })
-  if (alias != 'Unsuccessful') {
-    await renderReceive(req, res)
-  }
+
+  await renderReceive(req, res)
 })
 
 router.get('/stats/snippets/:index', async function (req, res) {
-  let alias = await database.getCurrentUser(req, res).then(res => {
-    return res
+
+  var clientVariables = {}
+  clientVariables.snippetcontents = []
+  // Need to load snippet data from the database to display on the page.
+  // For each snippet, retrieve the snippet content ID.
+  // snippets.forEach(async function (entry, index) {
+  await database.getTop10Snippets().then(async function (snippets) {
+    // snippets = snippets[0]
+    // console.log(snippets)
+    for (var snip in snippets) {
+      // console.log(snippets[snip])
+      // Retrieve the snippet content.
+      console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
+      let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
+        return res[0].username
+      })
+      clientVariables.snippetcontents.push({
+        'description': snippets[snip].description,
+        'content': snippets[snip].content,
+        'id': snippets[snip].id,
+        'forwardcount': snippets[snip].forwardcount,
+        'username': username
+      })
+    }
+    setTimeout(function () {
+      res.render('stats', clientVariables)
+    }, 100)
   })
-  if (alias != 'Unsuccessful') {
-    var clientVariables = {}
-    clientVariables.snippetcontents = []
-    // Need to load snippet data from the database to display on the page.
-    // For each snippet, retrieve the snippet content ID.
-    // snippets.forEach(async function (entry, index) {
-    await database.getTop10Snippets().then(async function (snippets) {
-      // snippets = snippets[0]
-      // console.log(snippets)
-      for (var snip in snippets) {
-        // console.log(snippets[snip])
-        // Retrieve the snippet content.
-        console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
-        let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
-          return res[0].username
-        })
-        clientVariables.snippetcontents.push({
-          'description': snippets[snip].description,
-          'content': snippets[snip].content,
-          'id': snippets[snip].id,
-          'forwardcount': snippets[snip].forwardcount,
-          'username': username
-        })
-      }
-      setTimeout(function () {
-        res.render('stats', clientVariables)
-      }, 100)
-    })
-  }
 })
 
 
 router.get('/stats', async function (req, res) {
-  let alias = await database.getCurrentUser(req, res).then(res => {
-    return res
+
+  var clientVariables = {}
+  clientVariables.snippetcontents = []
+  // Need to load snippet data from the database to display on the page.
+  // For each snippet, retrieve the snippet content ID.
+  // snippets.forEach(async function (entry, index) {
+  await database.getTop10Snippets().then(async function (snippets) {
+    // snippets = snippets[0]
+    // console.log(snippets)
+    for (var snip in snippets) {
+      // console.log(snippets[snip])
+      // Retrieve the snippet content.
+      console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
+      let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
+        return res[0].username
+      })
+      clientVariables.snippetcontents.push({
+        'description': snippets[snip].description,
+        'content': snippets[snip].content,
+        'id': snippets[snip].id,
+        'forwardcount': snippets[snip].forwardcount,
+        'username': username
+      })
+    }
+    setTimeout(function () {
+      res.render('stats', clientVariables)
+    }, 100)
   })
-  if (alias != 'Unsuccessful') {
-    var clientVariables = {}
-    clientVariables.snippetcontents = []
-    // Need to load snippet data from the database to display on the page.
-    // For each snippet, retrieve the snippet content ID.
-    // snippets.forEach(async function (entry, index) {
-    await database.getTop10Snippets().then(async function (snippets) {
-      // snippets = snippets[0]
-      // console.log(snippets)
-      for (var snip in snippets) {
-        // console.log(snippets[snip])
-        // Retrieve the snippet content.
-        console.log('server: Rendering receive, snippetcontent.id: ', snippets[snip])
-        let username = await database.getUsernameViaRedirect(snippets[snip].sender).then(res => {
-          return res[0].username
-        })
-        clientVariables.snippetcontents.push({
-          'description': snippets[snip].description,
-          'content': snippets[snip].content,
-          'id': snippets[snip].id,
-          'forwardcount': snippets[snip].forwardcount,
-          'username': username
-        })
-      }
-      setTimeout(function () {
-        res.render('stats', clientVariables)
-      }, 100)
-    })
-  }
 })
 
 
@@ -349,15 +353,17 @@ async function uploadImage(img, fileName) {
 }
 
 async function renderReceive(req, res) {
+  console.log("Gets HEre")
   var clientVariables = {}
   clientVariables.snippetcontents = []
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
   // Need to load snippet data from the database to display on the page.
-  await database.getRedirectViaAlias(alias).then(async function (redirect) {
-    redirect = redirect[0]
-    var snippets = JSON.parse(redirect.snippetids)
+  let redirect = await database.getRedirectViaAlias(alias).then(async function (redirect) {
+    return redirect[0]
+  })
+  await database.getAllUserSnippets(redirect.id).then(async function (snippets) {
     if (snippets == null || snippets.length == 0) {
       res.render('receive', {
         noSnippetMessage: 'You currently don\'t have any snippets!'
@@ -366,19 +372,15 @@ async function renderReceive(req, res) {
     // For each snippet, retrieve the snippet content ID.
     // snippets.forEach(async function (entry, index) {
     for (var snip in snippets) {
-      await database.getSnippet(snippets[snip]).then(async function (snippet) {
-        snippet = snippet[0]
-
-        // Retrieve the snippet content.
-        await database.getSnippetContent(snippet.contentid).then(snippetcontent => {
-          snippetcontent = snippetcontent[0]
-          console.log('server: Rendering receive, snippetcontent.id: ', snippetcontent.id)
-          clientVariables.snippetcontents.push({
-            'description': snippetcontent.description,
-            'content': snippetcontent.content,
-            'id': snippetcontent.id,
-            'parentid': snippet.id
-          })
+      // Retrieve the snippet content.
+      await database.getSnippetContent(snippets[snip].contentid).then(snippetcontent => {
+        snippetcontent = snippetcontent[0]
+        console.log('server: Rendering receive, snippetcontent.id: ', snippetcontent.id)
+        clientVariables.snippetcontents.push({
+          'description': snippetcontent.description,
+          'content': snippetcontent.content,
+          'id': snippetcontent.id,
+          'parentid': snip.id
         })
       })
     }
@@ -394,12 +396,18 @@ async function verifyUserViaAlias(res, req, alias) {
       if (
         result[0].alias === alias
       ) {
-        let username = await database.getUserByAlias(alias, false).then(res => {
-          return res
-        })
-        res.render('index', {
-          user: username
-        })
+        if (result[0].roleid == 1) {
+          let username = await database.getUserByAlias(alias, false).then(res => {
+            return res
+          })
+          res.render('index', {
+            user: username
+          })
+        } else if (result[0].roleid == 0) {
+          res.render('adminIndex', {
+            user: "Admin"
+          })
+        }
       } else {
         res.render('login')
       }
@@ -413,6 +421,7 @@ async function verifyUserViaAlias(res, req, alias) {
 async function authenticate(res, req, username, password) {
   // let sqlQuery = 'SELECT * FROM Login WHERE username = ?'
   // let sqlData = username
+  console.log(username, password)
   await database.getUserData(username, false).then(async function (result) {
     if (result.length > 0) {
       if (
@@ -420,17 +429,27 @@ async function authenticate(res, req, username, password) {
         await database.checkPassword(result[0].password, password, result[0].salt)
       ) {
         await generateJWT(res, req, result[0].redirectid, 'currentUser')
-        res.render('index', {
-          user: username
+        let role = await database.getRedirect(result[0].redirectid).then(res => {
+          return res[0].roleid
         })
+        if (role == 1) {
+          res.render('index', {
+            user: username
+          })
+
+        } else {
+          res.render('adminIndex', {
+            user: "Admin"
+          })
+        }
       } else {
         res.render('login', {
-          rMessage: 'Please Enter Username, Password and/or Confirm Your Password!'
+          lMessage: 'Wrong Username and/or Password!'
         })
       }
     } else {
       res.render('login', {
-        rMessage: 'Wrong Username and/or Password!'
+        lMessage: 'Wrong Username and/or Password!'
       })
     }
   })
@@ -451,3 +470,4 @@ async function generateJWT(res, req, redirectid, cookieName) {
 }
 
 app.use('/', router)
+app.use('/', adminServer.adminRouter)

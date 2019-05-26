@@ -2,6 +2,7 @@
 var tools = require('./tools.js')
 
 var currentlyActive = 0
+var userActive = 0
 
 // Shorthand for getting elements by ID.
 var $ = function (id) {
@@ -27,16 +28,13 @@ function setActive(counter) {
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      await tools.forwardSnippet(contentID).then(response => {
-        //   return
-        // }
-        // console.log('Snippet successfully forwarded')
+      await tools.sendSnippetToUser(contentID, userActive).then(response => {
         location.reload(true)
       })
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.deleteSnippet(contentID).then(response => {
+      await tools.deleteSnippetContent(contentID).then(response => {
         location.reload(true)
       })
     }
@@ -46,6 +44,16 @@ function setActive(counter) {
   var prevRowItem = $('select-' + currentlyActive)
   prevRowItem.children[0].setAttribute("class", "background1")
   currentlyActive = counter
+  rowItem.children[0].setAttribute("class", "background2")
+}
+
+// Make a snippet highlighted and fill the selected snippet content with.
+function selectUser(userId) {
+  var rowItem = $('userSelect-' + userId)
+  // Unhighlight the current selector and highlight the selected
+  var prevRowItem = $('userSelect-' + currentlyActive)
+  prevRowItem.children[0].setAttribute("class", "background1")
+  currentlyActive = userId
   rowItem.children[0].setAttribute("class", "background2")
 }
 
@@ -65,6 +73,27 @@ function assignButtons() {
           setActive(item)
         }
       })(counter)
+      counter += 1
+    } else {
+      viable = false
+    }
+  }
+}
+
+function assignOnClick() {
+  var viable = true
+  var counter = 0
+  while (viable) {
+    var rowID = 'userSelect-' + counter
+    var rowItem = $(rowID)
+    console.log('Gets Here')
+    if (rowItem != null) {
+      // Complexity here required to prevent rowItem from always being the final value of the loop.
+      rowItem.onclick = ((item) => {
+        return () => {
+          selectUser(item)
+        }
+      })(counter)
 
       counter += 1
     } else {
@@ -75,7 +104,12 @@ function assignButtons() {
 
 assignButtons()
 
+assignOnClick()
+
+selectUser(0)
+
 setActive(0)
+
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')

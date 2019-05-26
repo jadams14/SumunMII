@@ -519,14 +519,16 @@ receive {
     padding: 10px;
 
     info {
+      width: 70%;
+      height: 10%;
+      display: block;
+      position: fixed;
+      display: flex;
+
+
       description {
-        display: block;
-        position: absolute;
-        text-align: center;
-        left: 50%;
-        top: 10%;
-        transform: translate(-50%, -50%);
-        font-size: 30px;
+        margin: auto;
+        font-size: 25px;
         font-family: GlacialIndifferenceBold;
       }
 
@@ -890,4 +892,255 @@ stats {
       color: $color-dark;
     }
   }
+}
+
+adminSnippets {
+  background-color: $color-dark;
+
+  forms {
+    width: 100%;
+    height: 100%;
+  }
+
+  snippet-list {
+    margin: 12px 4px 0px 0px;
+    display: table;
+    width: 28%;
+    background-color: $color-dark;
+    border-collapse: separate;
+    border-spacing: 1.5px 1.5px;
+    float: left;
+
+    table-scroll {
+      max-width: 1280px;
+      width: 100%;
+      margin: auto;
+      display: block;
+    }
+
+    table-wrap {
+      width: 100%;
+      display: block;
+      height: 300px;
+      overflow: auto;
+      position: absolute;
+      z-index: 1;
+    }
+
+    row {
+      cursor: pointer;
+      display: table-row;
+      column-span: 2;
+      margin-bottom: 10px;
+    }
+
+    snippet {
+      display: table-cell;
+      width: 30%;
+      background-color: $color-primary;
+      padding: 10px;
+      border-radius: 6px;
+
+      info {
+        width: 55%;
+        float: left;
+        text-align: left;
+        display: block;
+        overflow: auto;
+
+        description {
+          position: relative;
+          font-size: 20px;
+        }
+
+        from {
+          font-size: 14px;
+          font-family: GlacialIndifferenceItalic;
+        }
+      }
+
+
+      img {
+        width: 40%;
+        height: auto;
+        max-height: 200px;
+        float: right;
+        display: block;
+      }
+    }
+
+    snippet:hover {
+      background-color: $color-light;
+    }
+  }
+
+
+  h1 {
+    color: $color-light;
+    font-size: 100px;
+    text-align: center;
+  }
+
+  snippet-selected {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 28%;
+    right: 0;
+    bottom: 0;
+    margin: 80px 3px 3px 3px;
+    background-color: $color-light;
+    border-radius: 6px;
+    padding: 10px;
+    width: 48%;
+
+    info {
+      width: 50%;
+      height: 10%;
+      display: block;
+      position: fixed;
+      display: flex;
+
+
+      description {
+        margin: auto;
+        font-size: 25px;
+        font-family: GlacialIndifferenceBold;
+      }
+
+      from {
+        display: block;
+        position: absolute;
+        text-align: center;
+        left: 50%;
+        top: 79%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        font-family: GlacialIndifferenceItalic;
+      }
+    }
+
+    img {
+      display: block;
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 60%;
+      width: auto;
+      max-width: 95%;
+    }
+
+    report {
+      content: url("/assets/images/report.png");
+      display: block;
+      position: absolute;
+      height: 5%;
+      width: auto;
+      right: 6px;
+      top: 6px;
+    }
+
+    control-box {
+      display: block;
+      position: absolute;
+      background-color: $color-primary;
+      height: 8%;
+      width: 20%;
+      top: 88%;
+      left: 50%;
+      border-radius: 12px;
+      transform: translate(-50%, -50%);
+
+      a {
+        cursor: pointer;
+      }
+
+      trash-it {
+        content: url("/assets/images/bin.png");
+        display: block;
+        float: left;
+        position: absolute;
+        height: 70%;
+        width: auto;
+        top: 50%;
+        left: 10%;
+        transform: translate(0%, -50%);
+        cursor: pointer;
+      }
+
+      forward-it {
+        content: url("/assets/images/plane-mail.png");
+        display: block;
+        float: left;
+        height: 70%;
+        width: auto;
+        position: absolute;
+        top: 50%;
+        right: 10%;
+        transform: translate(0%, -50%);
+        cursor: pointer;
+      }
+    }
+  }
+
+  user-list {
+    float: right;
+    margin: 10px 0px 0px 0px;
+    display: table;
+    width: 22.5%;
+    background-color: $color-dark;
+    border-collapse: separate;
+    border-spacing: 1.5px 1.5px;
+    overflow: scroll;
+
+    table-scroll {
+      max-width: 1280px;
+      width: 100%;
+      margin: auto;
+      display: block;
+    }
+
+    table-wrap {
+      width: 100%;
+      display: block;
+      height: 300px;
+      overflow: auto;
+      position: absolute;
+      z-index: 1;
+    }
+
+    userRow {
+      cursor: pointer;
+      display: table-row;
+      column-span: 2;
+      margin-bottom: 10px;
+    }
+
+    user {
+      display: table-cell;
+      width: 30%;
+      background-color: $color-primary;
+      padding: 10px;
+      border-radius: 6px;
+
+      info {
+        width: 55%;
+        float: left;
+        text-align: left;
+        display: block;
+        overflow: auto;
+
+        name {
+          position: relative;
+          font-size: auto;
+        }
+      }
+    }
+
+    user:hover {
+      background-color: $color-light;
+    }
+  }
+
 }

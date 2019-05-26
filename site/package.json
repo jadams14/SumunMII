@@ -66,7 +66,7 @@
   },
   "scripts": {
     "tests": "standard --fix 'models/**/*.js' 'server/**/*.js' 'tests/**/*.js'; mocha './{,!(node_modules)}/*.tests.js'",
-    "open-website": "open http://localhost:7000",
+    "open-website": "open https://localhost:7000",
     "start-server": "nodemon server/server",
     "compile-css": "sass --watch models/public/style:public/style",
     "compile-html": "pug --watch models/public -o public",
@@ -75,12 +75,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ekrekr/Simon.git"
+    "url": "git+https://github.com/jadams14/SumunMII.git"
   },
-  "author": "Elias Kassell Raymond and James Adams",
+  "author": "James Adams",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/Ekrekr/Simon/issues"
+    "url": "https://github.com/jadams14/SumunMII/issues"
   },
-  "homepage": "http://localhost:7000/"
+  "homepage": "https://localhost:7000/"
 }
