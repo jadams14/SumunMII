@@ -991,6 +991,8 @@ adminSnippets {
     width: 64.2%;
 
     info {
+      padding-top: 1%;
+      padding-left: 7%;
       width: 50%;
       height: 10%;
       display: block;
@@ -1001,17 +1003,6 @@ adminSnippets {
         margin: auto;
         font-size: 25px;
         font-family: GlacialIndifferenceBold;
-      }
-
-      from {
-        display: block;
-        position: absolute;
-        text-align: center;
-        left: 50%;
-        top: 79%;
-        transform: translate(-50%, -50%);
-        font-size: 16px;
-        font-family: GlacialIndifferenceItalic;
       }
     }
 
