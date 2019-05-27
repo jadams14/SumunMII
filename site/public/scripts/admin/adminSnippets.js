@@ -32,14 +32,7 @@ function setActive(counter) {
     }
     $('selected-content').src = snippet.content
     $('selected-description').innerHTML = snippet.description
-
-    $('report-it').onclick = async function () {
-      console.log('trash-it button pressed')
-      await tools.reportSnippet(contentID).then(response => {
-        location.reload(true)
-      })
-    }
-
+    
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
@@ -49,9 +42,11 @@ function setActive(counter) {
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.deleteSnippetContent(contentID).then(response => {
-        location.reload(true)
-      })
+      if (contentID != 0) {
+        await tools.deleteSnippetContent(contentID).then(response => {
+          location.reload(true)
+        })
+      }
     }
   })
 

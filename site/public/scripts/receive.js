@@ -9,7 +9,7 @@ var $ = function (id) {
 }
 
 // Make a snippet highlighted and fill the selected snippet content with.
-function setActive (counter) {
+function setActive(counter) {
   var rowItem = $('select-' + counter)
 
   // Need to find the child of the current row as its child snippet contains the actual id.
@@ -26,16 +26,20 @@ function setActive (counter) {
 
     $('report-it').onclick = async function () {
       console.log('trash-it button pressed')
-      await tools.reportSnippet(contentID).then(response => {
-        window.location.reload(true)
-      })
+      if (contentid != 0) {
+        await tools.reportSnippet(contentID).then(response => {
+          window.location.reload(true)
+        })
+      }
     }
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
-      await tools.forwardSnippet(snippetID).then(response => {
-        window.location.reload(true)
-      })
+      if (contentid != 0) {
+        await tools.forwardSnippet(snippetID).then(response => {
+          window.location.reload(true)
+        })
+      }
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
@@ -53,7 +57,7 @@ function setActive (counter) {
 }
 
 // Finds all row items and adds their onclick listener.
-function assignButtons () {
+function assignButtons() {
   var viable = true
   var counter = 0
   while (viable) {
@@ -79,7 +83,6 @@ function assignButtons () {
 assignButtons()
 
 setActive(0)
-
 },{"./tools.js":2}],2:[function(require,module,exports){
 const request = require('request')
 const rp = require('request-promise')

@@ -151,3 +151,7 @@ async function renderReceive (req, res) {
     res.render('adminSnippets', clientVariables)
   }, 100)
 }
+
+adminRouter.use(function (req, res, next) {
+  res.render('badrequest')
+})

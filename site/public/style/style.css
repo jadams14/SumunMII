@@ -984,4 +984,12 @@ adminSnippets user-list user:hover {
   background-color: #b8dbd9;
 }
 
+badrequest {
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  content: url("/assets/images/badRequest2.png");
+}
+
 /*# sourceMappingURL=style.css.map */

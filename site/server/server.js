@@ -36,9 +36,12 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, '../public')))
 app.use(cookieParser())
 app.use(bodyParser.json())
+app.get('/', (req, res) => {
+  res.render('login')
+})
 // Used to check current user against the cookie token
 
-async function connectToServer(testMode) {
+async function connectToServer (testMode) {
   https.createServer({
     key: fs.readFileSync(path.join(__dirname, '/credentials/server.key')),
     cert: fs.readFileSync(path.join(__dirname, '/credentials/server.cert'))
@@ -55,7 +58,7 @@ router.use(async function (req, res, next) {
     if (alias !== 'Unsuccessful') {
       next()
     } else {
-
+      res.render('badRequest')
     }
   } else {
     next()
@@ -124,6 +127,7 @@ router.get('/index', async function (req, res) {
 })
 
 router.get('/register', function (req, res) {
+  console.log('Gets HEre register')
   res.render('register')
 })
 
@@ -153,9 +157,6 @@ router.get('/', async function (req, res) {
 })
 
 router.get('/login', async function (req, res) {
-  // if (config.loggedOut == true) {
-  //   res.render('login')
-  // }
   try {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
@@ -272,7 +273,8 @@ router.post('/login', async function (req, res) {
     }
     await authenticate(res, req, username, password)
   } else if (req.body.button === 'register') {
-    res.redirect('register')
+    console.log('Gets Here')
+    res.render('register')
   }
 })
 
@@ -302,7 +304,11 @@ router.post('/register', async function (req, res) {
     } else if (password === confirmPassword &&
       (await database.getUserByUsername(username) === false)) {
       if (regex.test(password)) {
-        let userID = await database.createUser(username, password)
+        console.log('Gets HEre')
+        var alias = Math.random().toString(5).substring(2, 7)
+        let redirectid = await database.createRedirect(alias, 1)
+        let userID = await database.createUser(username, password, redirectid)
+        await database.assignBasicSnippet(userID)
         res.render('login', {
           lMessage: 'Please Login Using Your New Credentials!'
         })
@@ -317,7 +323,7 @@ router.post('/register', async function (req, res) {
   }
 })
 
-async function uploadImage(img, fileName) {
+async function uploadImage (img, fileName) {
   // let image = await getDataUri(img, function (dataUri) {
   //   return dataUri
   // })
@@ -343,7 +349,7 @@ async function uploadImage(img, fileName) {
   return result
 }
 
-async function renderReceive(req, res) {
+async function renderReceive (req, res) {
   var clientVariables = {}
   clientVariables.snippetcontents = []
   let alias = await database.getCurrentUser(req, res).then(res => {
@@ -384,7 +390,7 @@ async function renderReceive(req, res) {
   })
 }
 
-async function verifyUserViaAlias(res, req, alias) {
+async function verifyUserViaAlias (res, req, alias) {
   await database.getRedirectViaAlias(alias, false).then(async function (result) {
     if (result.length > 0) {
       if (
@@ -412,7 +418,7 @@ async function verifyUserViaAlias(res, req, alias) {
 }
 
 // Authenticates username and password for login
-async function authenticate(res, req, username, password) {
+async function authenticate (res, req, username, password) {
   // let sqlQuery = 'SELECT * FROM Login WHERE username = ?'
   // let sqlData = username
   await database.getUserData(username, false).then(async function (result) {
@@ -447,7 +453,7 @@ async function authenticate(res, req, username, password) {
   })
 }
 
-async function generateJWT(res, req, redirectid, cookieName) {
+async function generateJWT (res, req, redirectid, cookieName) {
   var alias = await database.getRedirect(redirectid).then(res => {
     return res[0].alias
   })
@@ -460,6 +466,10 @@ async function generateJWT(res, req, redirectid, cookieName) {
   })
   res.cookie(cookieName, token)
 }
+
+router.use(function (req, res, next) {
+  res.render('badrequest')
+})
 
 app.use('/', router)
 app.use('/', adminServer.adminRouter)
