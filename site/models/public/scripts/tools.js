@@ -41,7 +41,7 @@ async function deleteSnippet (snippetid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -66,7 +66,7 @@ async function sendSnippetToUser (contentid, userid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -90,7 +90,7 @@ async function reportSnippet (contentid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -114,7 +114,7 @@ async function deleteSnippetContent (contentid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -138,7 +138,7 @@ async function forwardSnippet (snippetid) {
       'Content-Type': 'application/json'
     }
   }
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -165,7 +165,7 @@ async function createSnippet (content, description, redirectid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error creating snippet')
       return false

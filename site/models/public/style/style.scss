@@ -35,21 +35,18 @@ $color-shadow: #00000080;
 
 @font-face {
   font-family: "GlacialIndifference";
-  src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf")
-    format("opentype");
+  src: url("fonts/glacial-indifference/GlacialIndifference-Regular.otf") format("opentype");
 }
 
 @font-face {
   font-family: "GlacialIndifferenceBold";
-  src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf")
-    format("opentype");
+  src: url("fonts/glacial-indifference/GlacialIndifference-Bold.otf") format("opentype");
   font-weight: bold;
 }
 
 @font-face {
   font-family: "GlacialIndifferenceItalic";
-  src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf")
-    format("opentype");
+  src: url("fonts/glacial-indifference/GlacialIndifference-Italic.otf") format("opentype");
   font-weight: italic;
 }
 
@@ -719,13 +716,11 @@ send {
   position: relative;
   width: 100%;
   height: 100vh;
-  background-image: radial-gradient(
-    circle,
-    $color-dark 70%,
-    $color-light,
-    $color-dark,
-    $color-dark
-  );
+  background-image: radial-gradient(circle,
+      $color-dark 70%,
+      $color-light,
+      $color-dark,
+      $color-dark);
 
   form {
     padding-top: 100px;
@@ -908,7 +903,6 @@ adminSnippets {
     float: left;
 
     table-scroll {
-      max-width: 1280px;
       width: 100%;
       margin: auto;
       display: block;
@@ -994,8 +988,7 @@ adminSnippets {
     margin: 80px 3px 3px 3px;
     background-color: $color-light;
     border-radius: 6px;
-    padding: 10px;
-    width: 48%;
+    width: 64.2%;
 
     info {
       width: 50%;
@@ -1088,17 +1081,15 @@ adminSnippets {
 
   user-list {
     float: right;
-    margin: 10px 0px 0px 0px;
     display: table;
-    width: 22.5%;
+    width: 7%;
+    padding-top: 10px;
     background-color: $color-dark;
     border-collapse: separate;
     border-spacing: 1.5px 1.5px;
     overflow: scroll;
 
-    table-scroll {
-      max-width: 1280px;
-      width: 100%;
+    margin-top: table-scroll {
       margin: auto;
       display: block;
     }
@@ -1127,7 +1118,7 @@ adminSnippets {
       border-radius: 6px;
 
       info {
-        width: 55%;
+        width: 100%;
         float: left;
         text-align: left;
         display: block;

@@ -4,16 +4,17 @@ var database = require('../server/database/database.js')
 
 var redirect = null
 var userID = null
+var contentID0 = null
+var snippetID0 = null
+var snippetID1 = null
+var snippet = null
 
 describe('Account creation.', async function () {
-  database.db = connectToServer(true)
   it('Login and redirect are created and retrieved correctly.', async function () {
     // The redirect needs to be created first as the login points to it.
-    console.log('Gets Here')
     var redirectID = await database.createRedirect('TestAlias', 1, true).then(res => {
       return res
     })
-    console.log(redirectID)
     redirect = await database.getRedirect(redirectID, true).then(res => {
       return res[0]
     })
@@ -29,17 +30,27 @@ describe('Account creation.', async function () {
   })
 })
 
-describe('Snippet Creation, Retrieval, Forwarding and Deletion.', async function () {
-  it('Snippets can be created, retrieved, and forwarded (Forwarding done by default in creation).', async function () {
+describe('Snippet Creation and Forwarding.', async function () {
+  it('Snippets can be created and forwarded.', async function () {
     // Create new snippet that forwards to two users.
-    var snippetIDs = await database.createSnippet('https://i.imgur.com/DccRRP7.jpg', 'Example Snippet', redirect.id, true).then(res => {
+    let snippetid = await database.createSnippet('https://i.imgur.com/DccRRP7.jpg', 'Example Snippet', redirect.id, true).then(res => {
       return res
     })
-    expect(snippetIDs).to.not.equal(null)
-    var snippetID0 = snippetIDs[0]
-    var snippetID1 = snippetIDs[1]
-    expect(snippetID0).to.not.equal(snippetID1)
+    snippet = await database.getSnippet(snippetid, true).then(res => {
+      return res[0]
+    })
+    var toRedirect0 = await database.sqlGetRandom('redirect', true).then(res => {
+      return res[0]
+    })
 
+    var toRedirect1 = await database.sqlGetRandom('redirect', true).then(res => {
+      return res[0]
+    })
+    var snippetIDs = await database.splitSnippet(snippet, toRedirect0, toRedirect1, true).then(res => {
+      return res
+    })
+    snippetID0 = snippetIDs[0]
+    snippetID1 = snippetIDs[1]
     // Retrieve the first snippet for checking the content
     var snippet0 = await database.getSnippet(snippetID0, true).then(res => {
       return res[0]
@@ -48,9 +59,13 @@ describe('Snippet Creation, Retrieval, Forwarding and Deletion.', async function
       return res[0]
     })
     expect(snippet0.contentid).to.equal(snippet1.contentid)
+  })
+})
 
+describe('Snippet Retrieval and Deletion.', async function () {
+  it('Snippets can be retrieved and deleted.', async function () {
     // Remove the snippet content first as snippets point to it.
-    var contentID0 = await database.removeSnippetContent(snippet0.contentid, true).then(res => {
+    contentID0 = await database.removeSnippetContent(snippet.contentid, true).then(res => {
       return res
     })
     // TODO: try retrieving snippet and fail if successfully retrieves.

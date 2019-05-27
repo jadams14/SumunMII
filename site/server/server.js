@@ -5,14 +5,13 @@ const express = require('express')
 var bodyParser = require('body-parser')
 const app = express()
 var router = express.Router()
-const request = require('request')
 const jwt = require('jsonwebtoken')
 const config = require('./config.js')
 var cookieParser = require('cookie-parser')
 var fs = require('fs')
 const multer = require('multer')
 const upload = multer({
-  dest: __dirname + '/images'
+  dest: path.join(__dirname, '/images')
 })
 var https = require('https')
 const rp = require('request-promise')
@@ -39,21 +38,21 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 // Used to check current user against the cookie token
 
-async function connectToServer (testMode) {
+async function connectToServer(testMode) {
   https.createServer({
-    key: fs.readFileSync(__dirname + '/credentials/server.key'),
-    cert: fs.readFileSync(__dirname + '/credentials/server.cert')
+    key: fs.readFileSync(path.join(__dirname, '/credentials/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, '/credentials/server.cert'))
   }, app).listen(7000, 'localhost', () => {
     console.log('server: Express running → localhost:7000')
   })
 }
 
 router.use(async function (req, res, next) {
-  if (req.method != 'POST' && req.url != '/login' && req.url != '/logout') {
+  if (req.method !== 'POST' && req.url !== '/login' && req.url !== '/logout') {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
     })
-    if (alias != 'Unsuccessful') {
+    if (alias !== 'Unsuccessful') {
       next()
     } else {
 
@@ -113,15 +112,12 @@ router.post('/create-snippet/', async function (req, res) {
 // Page requests.
 /// ///////////////////////////////////////////////
 router.get('/index', async function (req, res) {
-  console.log('GEts Heres')
   let alias = await database.getCurrentUser(req, res).then(res => {
     return res
   })
-  console.log('GEts Heres', alias)
   let username = await database.getUserByAlias(alias).then(res => {
     return res
   })
-  console.log('GEts Heres', username)
   res.render('index', {
     user: username
   })
@@ -275,7 +271,7 @@ router.post('/login', async function (req, res) {
       })
     }
     await authenticate(res, req, username, password)
-  } else if (req.body.button == 'register') {
+  } else if (req.body.button === 'register') {
     res.redirect('register')
   }
 })
@@ -284,9 +280,9 @@ router.post('/receive', async function (req, res) {
   await database.deleteSnippet(req.body.snippetid, req, res, false).then(response => {
     return response
   })
-  if (req.body.button == 'trash-it') {
+  if (req.body.button === 'trash-it') {
 
-  } else if (req.body.button == 'forward-it') {
+  } else if (req.body.button === 'forward-it') {
     await database.forwardSnippet(req.body.snippetid, req, res).then(res => {
       return res
     })
@@ -305,26 +301,23 @@ router.post('/register', async function (req, res) {
       })
     } else if (password === confirmPassword &&
       (await database.getUserByUsername(username) === false)) {
-      console.log(password)
       if (regex.test(password)) {
-        await database.createUser(username, password)
-        console.log('Gets Here!!')
+        let userID = await database.createUser(username, password)
         res.render('login', {
           lMessage: 'Please Login Using Your New Credentials!'
         })
       } else {
-        console.log('Gets Here!')
         res.render('register', {
           rMessage: 'Passwords must be between 8 and 16 characters, require atleast 1 special character, number, uppercase and a lower case letter!'
         })
       }
     }
-  } else if (req.body.button == 'cancel') {
+  } else if (req.body.button === 'cancel') {
     res.redirect('/login')
   }
 })
 
-async function uploadImage (img, fileName) {
+async function uploadImage(img, fileName) {
   // let image = await getDataUri(img, function (dataUri) {
   //   return dataUri
   // })
@@ -350,8 +343,7 @@ async function uploadImage (img, fileName) {
   return result
 }
 
-async function renderReceive (req, res) {
-  console.log('Gets HEre')
+async function renderReceive(req, res) {
   var clientVariables = {}
   clientVariables.snippetcontents = []
   let alias = await database.getCurrentUser(req, res).then(res => {
@@ -362,7 +354,7 @@ async function renderReceive (req, res) {
     return redirect[0]
   })
   await database.getAllUserSnippets(redirect.id).then(async function (snippets) {
-    if (snippets == null || snippets.length == 0) {
+    if (snippets === null || snippets.length === 0) {
       res.render('receive', {
         noSnippetMessage: 'You currently don\'t have any snippets!'
       })
@@ -392,20 +384,20 @@ async function renderReceive (req, res) {
   })
 }
 
-async function verifyUserViaAlias (res, req, alias) {
+async function verifyUserViaAlias(res, req, alias) {
   await database.getRedirectViaAlias(alias, false).then(async function (result) {
     if (result.length > 0) {
       if (
         result[0].alias === alias
       ) {
-        if (result[0].roleid == 1) {
+        if (result[0].roleid === 1) {
           let username = await database.getUserByAlias(alias, false).then(res => {
             return res
           })
           res.render('index', {
             user: username
           })
-        } else if (result[0].roleid == 0) {
+        } else if (result[0].roleid === 0) {
           res.render('adminIndex', {
             user: 'Admin'
           })
@@ -420,10 +412,9 @@ async function verifyUserViaAlias (res, req, alias) {
 }
 
 // Authenticates username and password for login
-async function authenticate (res, req, username, password) {
+async function authenticate(res, req, username, password) {
   // let sqlQuery = 'SELECT * FROM Login WHERE username = ?'
   // let sqlData = username
-  console.log(username, password)
   await database.getUserData(username, false).then(async function (result) {
     if (result.length > 0) {
       if (
@@ -434,7 +425,7 @@ async function authenticate (res, req, username, password) {
         let role = await database.getRedirect(result[0].redirectid).then(res => {
           return res[0].roleid
         })
-        if (role == 1) {
+        if (role === 1) {
           res.render('index', {
             user: username
           })
@@ -456,7 +447,7 @@ async function authenticate (res, req, username, password) {
   })
 }
 
-async function generateJWT (res, req, redirectid, cookieName) {
+async function generateJWT(res, req, redirectid, cookieName) {
   var alias = await database.getRedirect(redirectid).then(res => {
     return res[0].alias
   })

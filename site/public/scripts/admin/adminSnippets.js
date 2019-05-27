@@ -141,10 +141,10 @@ module.exports = {
   deleteSnippet: deleteSnippet,
   sendSnippetToUser: sendSnippetToUser,
   deleteSnippetContent: deleteSnippetContent,
-  reportSnippet: reportSnippet,
+  reportSnippet: reportSnippet
 }
 
-function retrieveSnippetContent(id, _callback) {
+function retrieveSnippetContent (id, _callback) {
   request('http://localhost:7000/snippetcontent/' + id, {
     json: true
   }, (err, res, body) => {
@@ -156,7 +156,7 @@ function retrieveSnippetContent(id, _callback) {
   })
 }
 
-async function deleteSnippet(snippetid) {
+async function deleteSnippet (snippetid) {
   console.log('tools: deleting snippet', snippetid)
   var requestInfo = {
     uri: 'http://localhost:7000/receive/deleteSnippet/',
@@ -169,7 +169,7 @@ async function deleteSnippet(snippetid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -180,7 +180,7 @@ async function deleteSnippet(snippetid) {
   })
 }
 
-async function sendSnippetToUser(contentid, userid) {
+async function sendSnippetToUser (contentid, userid) {
   console.log('tools: send snippet to user', contentid, userid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/sendSnippetToUser/',
@@ -194,7 +194,7 @@ async function sendSnippetToUser(contentid, userid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -205,7 +205,7 @@ async function sendSnippetToUser(contentid, userid) {
   })
 }
 
-async function reportSnippet(contentid) {
+async function reportSnippet (contentid) {
   console.log('tools: deleting snippet content', contentid)
   var requestInfo = {
     uri: 'http://localhost:7000/reportSnippet/',
@@ -218,7 +218,7 @@ async function reportSnippet(contentid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -229,7 +229,7 @@ async function reportSnippet(contentid) {
   })
 }
 
-async function deleteSnippetContent(contentid) {
+async function deleteSnippetContent (contentid) {
   console.log('tools: deleting snippet content', contentid)
   var requestInfo = {
     uri: 'http://localhost:7000/admin/deleteSnippetContent/',
@@ -242,7 +242,7 @@ async function deleteSnippetContent(contentid) {
     }
   }
 
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -253,7 +253,7 @@ async function deleteSnippetContent(contentid) {
   })
 }
 
-async function forwardSnippet(snippetid) {
+async function forwardSnippet (snippetid) {
   console.log('tools: forwarding snippet', snippetid)
 
   var requestInfo = {
@@ -266,7 +266,7 @@ async function forwardSnippet(snippetid) {
       'Content-Type': 'application/json'
     }
   }
-  return await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error forwarding snippet')
       return false
@@ -278,7 +278,7 @@ async function forwardSnippet(snippetid) {
   })
 }
 
-async function createSnippet(content, description, redirectid, _callback) {
+async function createSnippet (content, description, redirectid, _callback) {
   console.log('tools: creating snippet content', content, 'with description', description, 'from redirect id', redirectid)
 
   var requestInfo = {
@@ -293,7 +293,7 @@ async function createSnippet(content, description, redirectid, _callback) {
       'Content-Type': 'application/json'
     }
   }
-  await rp(requestInfo).then(function (err, res) {
+  return rp(requestInfo).then(function (err, res) {
     if (err) {
       console.log('tools: error creating snippet')
       return false
@@ -303,6 +303,7 @@ async function createSnippet(content, description, redirectid, _callback) {
     return res.body
   })
 }
+
 },{"request":132,"request-promise":131}],3:[function(require,module,exports){
 'use strict';
 

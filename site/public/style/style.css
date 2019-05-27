@@ -789,7 +789,6 @@ adminSnippets snippet-list {
   float: left;
 }
 adminSnippets snippet-list table-scroll {
-  max-width: 1280px;
   width: 100%;
   margin: auto;
   display: block;
@@ -863,8 +862,7 @@ adminSnippets snippet-selected {
   margin: 80px 3px 3px 3px;
   background-color: #b8dbd9;
   border-radius: 6px;
-  padding: 10px;
-  width: 48%;
+  width: 64.2%;
 }
 adminSnippets snippet-selected info {
   width: 50%;
@@ -947,19 +945,16 @@ adminSnippets snippet-selected control-box forward-it {
 }
 adminSnippets user-list {
   float: right;
-  margin: 10px 0px 0px 0px;
   display: table;
-  width: 22.5%;
+  width: 7%;
+  padding-top: 10px;
   background-color: #2f4550;
   border-collapse: separate;
   border-spacing: 1.5px 1.5px;
   overflow: scroll;
-}
-adminSnippets user-list table-scroll {
-  max-width: 1280px;
-  width: 100%;
-  margin: auto;
-  display: block;
+  margin-top: table-scroll;
+  margin-top-margin: auto;
+  margin-top-display: block;
 }
 adminSnippets user-list table-wrap {
   width: 100%;
@@ -983,7 +978,7 @@ adminSnippets user-list user {
   border-radius: 6px;
 }
 adminSnippets user-list user info {
-  width: 55%;
+  width: 100%;
   float: left;
   text-align: left;
   display: block;

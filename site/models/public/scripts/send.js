@@ -32,8 +32,5 @@ fileField.addEventListener('change', (e) => {
         fileBackground.style.height = 200
       }
     }
-    res.send({
-      image: e.target.result
-    })
   }
 })

@@ -2,20 +2,8 @@ var path = require('path')
 const express = require('express')
 var bodyParser = require('body-parser')
 var database = require('./database/database.js')
-const app = express()
 var adminRouter = express.Router()
-const request = require('request')
-const jwt = require('jsonwebtoken')
-const config = require('./config.js')
 var cookieParser = require('cookie-parser')
-var fs = require('fs')
-const multer = require('multer')
-const upload = multer({
-  dest: __dirname + '/images'
-})
-const rp = require('request-promise')
-// var certificate = fs.readFileSync('../client-key.pem').toString();
-
 module.exports = {
   adminRouter: adminRouter
 }
@@ -24,14 +12,14 @@ adminRouter.use(express.static(path.join(__dirname, '../public')))
 adminRouter.use(cookieParser())
 adminRouter.use(bodyParser.json())
 
-adminRouter.use('/styles', express.static(__dirname + '/styles'))
+adminRouter.use('/styles', express.static(path.join(__dirname, '/styles')))
 
 adminRouter.use(async function (req, res, next) {
-  if (req.method != 'POST' && req.url != '/admin/login' && req.url != '/admin/logout') {
+  if (req.method !== 'POST' && req.url !== '/admin/login' && req.url !== '/admin/logout') {
     let alias = await database.getCurrentUser(req, res).then(res => {
       return res
     })
-    if (alias != 'Unsuccessful') {
+    if (alias !== 'Unsuccessful') {
       next()
     } else {
 
@@ -42,7 +30,7 @@ adminRouter.use(async function (req, res, next) {
 })
 
 adminRouter.post('/admin/deleteSnippetContent/', async function (req, res) {
-  console.log('server: Forwarding snippet id:', req.body.contentid)
+  console.log('server: Deleting snippet id:', req.body.contentid)
   await database.deleteSnippetContent(req.body.contentid, req, res).then(result => {
     return result
   })
@@ -118,7 +106,7 @@ async function renderReceive (req, res) {
   clientVariables.users = []
   // Need to load snippet data from the database to display on the page.
   await database.getAllSnippetContents().then(async function (snippets) {
-    if (snippets == null || snippets.length == 0) {
+    if (snippets === null || snippets.length === 0) {
       res.render('adminSnippets', {
         noSnippetMessage: 'You currently don\'t have any snippets!'
       })
@@ -143,7 +131,7 @@ async function renderReceive (req, res) {
   })
   await database.getAllUsers().then(async function (users) {
     console.log(users)
-    if (users == null || users.length == 0) {
+    if (users === null || users.length === 0) {
       res.render('adminSnippets', {
         noSnippetMessage: 'You currently don\'t have any users!'
       })

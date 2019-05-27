@@ -26,23 +26,20 @@ function setActive (counter) {
     $('report-it').onclick = async function () {
       console.log('trash-it button pressed')
       await tools.reportSnippet(contentID).then(response => {
-        location.reload(true)
+        window.location.reload(true)
       })
     }
     // Update trash it and forward it buttons.
     $('forward-it').onclick = async function () {
       console.log('forward-it button pressed')
       await tools.forwardSnippet(snippetID).then(response => {
-        //   return
-        // }
-        // console.log('Snippet successfully forwarded')
-        location.reload(true)
+        window.location.reload(true)
       })
     }
     $('trash-it').onclick = async function () {
       console.log('trash-it button pressed')
       await tools.deleteSnippet(snippetID).then(response => {
-        location.reload(true)
+        window.location.reload(true)
       })
     }
   })
