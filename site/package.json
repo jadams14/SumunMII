@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "acorn": "^6.1.1",
+    "acorn": "^6.4.1",
     "acorn-dynamic-import": "^4.0.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
