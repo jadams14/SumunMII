@@ -30,7 +30,7 @@
     "express-session": "^1.16.1",
     "filereader": "^0.10.3",
     "imgur-uploader": "^4.2.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-simple": "^0.5.6",
     "minimatch": "^3.0.4",
