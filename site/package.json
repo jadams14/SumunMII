@@ -31,7 +31,7 @@
     "filereader": "^0.10.3",
     "imgur-uploader": "^4.2.1",
     "jquery": "^3.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwt-simple": "^0.5.6",
     "minimatch": "^3.0.4",
     "mssql": "^4.3.2",
